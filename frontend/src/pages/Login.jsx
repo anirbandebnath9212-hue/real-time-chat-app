@@ -9,7 +9,7 @@ function Login({ setIsLoggedIn }) {
     const handleLogin = async () => {
         try {
             const response = await fetch(
-                "http://localhost:5000/api/auth/login",
+                "https://real-time-chat-app-hgdr.onrender.com/api/auth/login",
                 {
                     method: "POST",
                     headers: {

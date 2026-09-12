@@ -385,7 +385,7 @@ useEffect(() => {
                     localStorage.getItem("token");
 
                 const response = await fetch(
-                    "http://localhost:5000/api/auth/me",
+                    "https://real-time-chat-app-hgdr.onrender.com/api/auth/me",
                     {
                         headers: {
                             Authorization:
@@ -448,7 +448,7 @@ useEffect(() => {
                 localStorage.getItem("token");
 
             const response = await fetch(
-                "http://localhost:5000/api/conversations",
+                "https://real-time-chat-app-hgdr.onrender.com/api/conversations",
                 {
                     headers: {
                         Authorization:
@@ -495,7 +495,7 @@ useEffect(() => {
                     localStorage.getItem("token");
 
                 const response = await fetch(
-                    "http://localhost:5000/api/users",
+                    "https://real-time-chat-app-hgdr.onrender.com/api/users",
                     {
                         headers: {
                             Authorization:
@@ -549,7 +549,7 @@ useEffect(() => {
 
 
             const response = await fetch(
-                "http://localhost:5000/api/conversations",
+                "https://real-time-chat-app-hgdr.onrender.com/api/conversations",
                 {
                     method: "POST",
 
@@ -610,7 +610,7 @@ useEffect(() => {
             // Get messages
             const messageResponse =
                 await fetch(
-                    `http://localhost:5000/api/messages/${conversation._id}`,
+                    `https://real-time-chat-app-hgdr.onrender.com/api/messages/${conversation._id}`,
                     {
                         headers: {
                             Authorization:
@@ -648,7 +648,7 @@ useEffect(() => {
             // Mark messages as read
             const readResponse =
                 await fetch(
-                    `http://localhost:5000/api/messages/read/${conversation._id}`,
+                    `https://real-time-chat-app-hgdr.onrender.com/api/messages/read/${conversation._id}`,
                     {
                         method: "PATCH",
 
@@ -785,7 +785,7 @@ useEffect(() => {
 
 
             const response = await fetch(
-                "http://localhost:5000/api/messages",
+                "https://real-time-chat-app-hgdr.onrender.com/api/messages",
                 {
                     method: "POST",
 
