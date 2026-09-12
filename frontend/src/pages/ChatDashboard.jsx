@@ -3,8 +3,8 @@ import socket from "../socket";
 
 function ChatDashboard({ setIsLoggedIn }) {
 
-const [users, setUsers] = useState([]);
-const [conversations, setConversations] = useState([]);    
+    const [users, setUsers] = useState([]);
+    const [conversations, setConversations] = useState([]);
     const [selectedConversation, setSelectedConversation] = useState(null);
     const [messages, setMessages] = useState([]);
     const [messageText, setMessageText] = useState("");
@@ -72,10 +72,12 @@ const [conversations, setConversations] = useState([]);
 
         };
 
+
         socket.on(
             "connect",
             handleConnect
         );
+
 
         return () => {
 
@@ -91,228 +93,242 @@ const [conversations, setConversations] = useState([]);
 
     // =========================
     // RECEIVE NEW MESSAGE
-useEffect(() => {
+    // =========================
 
-    const handleNewMessage = (message) => {
+    useEffect(() => {
 
-        console.log(
-            "New message received:",
-            message
-        );
+        const handleNewMessage = (message) => {
+
+            console.log(
+                "New message received:",
+                message
+            );
 
 
-        // UPDATE SIDEBAR
-setConversations((previousConversations) => {
+            // UPDATE SIDEBAR
 
-    return previousConversations.map(
-        (conversation) => {
+            setConversations(
+                (previousConversations) => {
+
+                    return previousConversations.map(
+                        (conversation) => {
+
+                            if (
+                                conversation._id.toString() ===
+                                message.conversationId.toString()
+                            ) {
+
+                                const senderId =
+                                    message.sender?._id ||
+                                    message.sender;
+
+
+                                const isMyMessage =
+                                    currentUser &&
+                                    senderId.toString() ===
+                                    currentUser._id.toString();
+
+
+                                return {
+
+                                    ...conversation,
+
+                                    lastMessage:
+                                        message,
+
+                                    unreadCount:
+                                        isMyMessage
+                                            ? conversation.unreadCount
+                                            : conversation.unreadCount + 1
+
+                                };
+
+                            }
+
+
+                            return conversation;
+
+                        }
+                    );
+
+                }
+            );
+
+
+            // CHECK CURRENT CHAT
 
             if (
-                conversation._id.toString() ===
-                message.conversationId.toString()
+                !selectedConversation ||
+                message.conversationId.toString() !==
+                selectedConversation._id.toString()
             ) {
 
-                // Check if message is from me
-                const senderId =
-                    message.sender?._id ||
-                    message.sender;
-
-                const isMyMessage =
-                    currentUser &&
-                    senderId.toString() ===
-                    currentUser._id.toString();
-
-
-                return {
-                    ...conversation,
-
-                    // Update latest message
-                    lastMessage: message,
-
-                    // Increase unread count
-                    // only when message is from the other user
-                    unreadCount:
-                        isMyMessage
-                            ? conversation.unreadCount
-                            : conversation.unreadCount + 1
-                };
+                return;
 
             }
 
-            return conversation;
 
-        }
-    );
+            // ADD MESSAGE TO CURRENT CHAT
 
-});
+            setMessages(
+                (previousMessages) => {
 
-
-        // CHECK CURRENT CHAT
-
-        if (
-            !selectedConversation ||
-            message.conversationId.toString() !==
-            selectedConversation._id.toString()
-        ) {
-
-            return;
-
-        }
+                    const alreadyExists =
+                        previousMessages.some(
+                            (previousMessage) =>
+                                previousMessage._id ===
+                                message._id
+                        );
 
 
-        // ADD MESSAGE TO CURRENT CHAT
+                    if (alreadyExists) {
 
-        setMessages((previousMessages) => {
+                        return previousMessages;
 
-            const alreadyExists =
-                previousMessages.some(
-                    (previousMessage) =>
-                        previousMessage._id ===
-                        message._id
-                );
-
-            if (alreadyExists) {
-                return previousMessages;
-            }
-
-            return [
-                ...previousMessages,
-                message
-            ];
-
-        });
-
-    };
+                    }
 
 
-    socket.on(
-        "newMessage",
-        handleNewMessage
-    );
+                    return [
+                        ...previousMessages,
+                        message
+                    ];
+
+                }
+            );
+
+        };
 
 
-    return () => {
-
-        socket.off(
+        socket.on(
             "newMessage",
             handleNewMessage
         );
 
-    };
 
-}, [selectedConversation]);
+        return () => {
+
+            socket.off(
+                "newMessage",
+                handleNewMessage
+            );
+
+        };
+
+    }, [
+        selectedConversation,
+        currentUser
+    ]);
 
 
+    // =========================
     // MESSAGES READ
-useEffect(() => {
+    // =========================
 
-    const handleMessagesRead = (data) => {
+    useEffect(() => {
 
-        console.log(
-            "Messages read:",
-            data
-        );
+        const handleMessagesRead = (data) => {
 
-
-        // Update message ticks
-        // inside the current chat
-
-        if (
-            selectedConversation &&
-            data.conversationId.toString() ===
-            selectedConversation._id.toString()
-        ) {
-
-            setMessages((previousMessages) => {
-
-                return previousMessages.map(
-                    (message) => {
-
-                        const senderId =
-                            message.sender?._id ||
-                            message.sender;
+            console.log(
+                "Messages read:",
+                data
+            );
 
 
-                        const isMyMessage =
-                            currentUser &&
-                            senderId.toString() ===
-                            currentUser._id.toString();
+            if (
+                selectedConversation &&
+                data.conversationId.toString() ===
+                selectedConversation._id.toString()
+            ) {
+
+                setMessages(
+                    (previousMessages) => {
+
+                        return previousMessages.map(
+                            (message) => {
+
+                                const senderId =
+                                    message.sender?._id ||
+                                    message.sender;
 
 
-                        if (isMyMessage) {
-
-                            return {
-                                ...message,
-                                read: true
-                            };
-
-                        }
+                                const isMyMessage =
+                                    currentUser &&
+                                    senderId.toString() ===
+                                    currentUser._id.toString();
 
 
-                        return message;
+                                if (isMyMessage) {
 
-                    }
-                );
+                                    return {
+                                        ...message,
+                                        read: true
+                                    };
 
-            });
-
-        }
-
-
-        // =========================
-        // REMOVE UNREAD COUNT
-        // =========================
-
-        setConversations(
-            (previousConversations) => {
-
-                return previousConversations.map(
-                    (conversation) => {
-
-                        if (
-                            conversation._id.toString() ===
-                            data.conversationId.toString()
-                        ) {
-
-                            return {
-                                ...conversation,
-                                unreadCount: 0
-                            };
-
-                        }
+                                }
 
 
-                        return conversation;
+                                return message;
+
+                            }
+                        );
 
                     }
                 );
 
             }
-        );
-
-    };
 
 
-    socket.on(
-        "messagesRead",
-        handleMessagesRead
-    );
+            // REMOVE UNREAD COUNT
+
+            setConversations(
+                (previousConversations) => {
+
+                    return previousConversations.map(
+                        (conversation) => {
+
+                            if (
+                                conversation._id.toString() ===
+                                data.conversationId.toString()
+                            ) {
+
+                                return {
+                                    ...conversation,
+                                    unreadCount: 0
+                                };
+
+                            }
 
 
-    return () => {
+                            return conversation;
 
-        socket.off(
+                        }
+                    );
+
+                }
+            );
+
+        };
+
+
+        socket.on(
             "messagesRead",
             handleMessagesRead
         );
 
-    };
 
+        return () => {
 
-}, [
-    selectedConversation,
-    currentUser
-]);
+            socket.off(
+                "messagesRead",
+                handleMessagesRead
+            );
+
+        };
+
+    }, [
+        selectedConversation,
+        currentUser
+    ]);
 
 
     // =========================
@@ -384,6 +400,7 @@ useEffect(() => {
                 const token =
                     localStorage.getItem("token");
 
+
                 const response = await fetch(
                     "https://real-time-chat-app-hgdr.onrender.com/api/auth/me",
                     {
@@ -394,13 +411,16 @@ useEffect(() => {
                     }
                 );
 
+
                 const data =
                     await response.json();
+
 
                 console.log(
                     "Current user:",
                     data
                 );
+
 
                 if (!response.ok) {
 
@@ -411,14 +431,20 @@ useEffect(() => {
                     setIsLoggedIn(false);
 
                     return;
+
                 }
 
-                setCurrentUser(data.user);
+
+                setCurrentUser(
+                    data.user
+                );
+
 
                 socket.emit(
                     "userOnline",
                     data.user._id
                 );
+
 
             } catch (error) {
 
@@ -427,6 +453,7 @@ useEffect(() => {
             }
 
         };
+
 
         fetchCurrentUser();
 
@@ -437,54 +464,6 @@ useEffect(() => {
     // GET ALL USERS
     // =========================
 
-// GET MY CONVERSATIONS
-useEffect(() => {
-
-    const fetchConversations = async () => {
-
-        try {
-
-            const token =
-                localStorage.getItem("token");
-
-            const response = await fetch(
-                "https://real-time-chat-app-hgdr.onrender.com/api/conversations",
-                {
-                    headers: {
-                        Authorization:
-                            `Bearer ${token}`
-                    }
-                }
-            );
-
-            const data =
-                await response.json();
-
-            console.log(
-                "My conversations:",
-                data
-            );
-
-            if (!response.ok) {
-                return;
-            }
-
-            setConversations(
-                data.conversations
-            );
-
-        } catch (error) {
-
-            console.log(error);
-
-        }
-
-    };
-
-    fetchConversations();
-
-}, []);
-
     useEffect(() => {
 
         const fetchUsers = async () => {
@@ -493,6 +472,7 @@ useEffect(() => {
 
                 const token =
                     localStorage.getItem("token");
+
 
                 const response = await fetch(
                     "https://real-time-chat-app-hgdr.onrender.com/api/users",
@@ -504,19 +484,28 @@ useEffect(() => {
                     }
                 );
 
+
                 const data =
                     await response.json();
+
 
                 console.log(
                     "All users:",
                     data
                 );
 
+
                 if (!response.ok) {
+
                     return;
+
                 }
 
-                setUsers(data.users);
+
+                setUsers(
+                    data.users
+                );
+
 
             } catch (error) {
 
@@ -526,7 +515,69 @@ useEffect(() => {
 
         };
 
+
         fetchUsers();
+
+    }, []);
+
+
+    // =========================
+    // GET MY CONVERSATIONS
+    // =========================
+
+    useEffect(() => {
+
+        const fetchConversations = async () => {
+
+            try {
+
+                const token =
+                    localStorage.getItem("token");
+
+
+                const response = await fetch(
+                    "https://real-time-chat-app-hgdr.onrender.com/api/conversations",
+                    {
+                        headers: {
+                            Authorization:
+                                `Bearer ${token}`
+                        }
+                    }
+                );
+
+
+                const data =
+                    await response.json();
+
+
+                console.log(
+                    "My conversations:",
+                    data
+                );
+
+
+                if (!response.ok) {
+
+                    return;
+
+                }
+
+
+                setConversations(
+                    data.conversations
+                );
+
+
+            } catch (error) {
+
+                console.log(error);
+
+            }
+
+        };
+
+
+        fetchConversations();
 
     }, []);
 
@@ -543,9 +594,14 @@ useEffect(() => {
                 localStorage.getItem("token");
 
 
-            setSelectedUser(user);
+            setSelectedUser(
+                user
+            );
 
-            setIsOtherUserTyping(false);
+
+            setIsOtherUserTyping(
+                false
+            );
 
 
             const response = await fetch(
@@ -554,16 +610,22 @@ useEffect(() => {
                     method: "POST",
 
                     headers: {
+
                         "Content-Type":
                             "application/json",
 
                         Authorization:
                             `Bearer ${token}`
+
                     },
 
                     body: JSON.stringify({
-                        userId: user._id
+
+                        userId:
+                            user._id
+
                     })
+
                 }
             );
 
@@ -583,6 +645,7 @@ useEffect(() => {
                 );
 
                 return;
+
             }
 
 
@@ -607,15 +670,19 @@ useEffect(() => {
             );
 
 
-            // Get messages
+            // GET MESSAGES
+
             const messageResponse =
                 await fetch(
                     `https://real-time-chat-app-hgdr.onrender.com/api/messages/${conversation._id}`,
                     {
                         headers: {
+
                             Authorization:
                                 `Bearer ${token}`
+
                         }
+
                     }
                 );
 
@@ -637,6 +704,7 @@ useEffect(() => {
                 );
 
                 return;
+
             }
 
 
@@ -645,7 +713,8 @@ useEffect(() => {
             );
 
 
-            // Mark messages as read
+            // MARK MESSAGES AS READ
+
             const readResponse =
                 await fetch(
                     `https://real-time-chat-app-hgdr.onrender.com/api/messages/read/${conversation._id}`,
@@ -653,9 +722,12 @@ useEffect(() => {
                         method: "PATCH",
 
                         headers: {
+
                             Authorization:
                                 `Bearer ${token}`
+
                         }
+
                     }
                 );
 
@@ -667,6 +739,39 @@ useEffect(() => {
             console.log(
                 "Read response:",
                 readData
+            );
+
+
+            // Remove unread count locally
+
+            setConversations(
+                (previousConversations) => {
+
+                    return previousConversations.map(
+                        (item) => {
+
+                            if (
+                                item._id ===
+                                conversation._id
+                            ) {
+
+                                return {
+
+                                    ...item,
+
+                                    unreadCount: 0
+
+                                };
+
+                            }
+
+
+                            return item;
+
+                        }
+                    );
+
+                }
             );
 
 
@@ -689,15 +794,18 @@ useEffect(() => {
             e.target.value;
 
 
-        setMessageText(value);
+        setMessageText(
+            value
+        );
 
 
         if (!selectedConversation) {
+
             return;
+
         }
 
 
-        // Clear previous timer
         if (typingTimeoutRef.current) {
 
             clearTimeout(
@@ -707,7 +815,6 @@ useEffect(() => {
         }
 
 
-        // If input is empty
         if (!value.trim()) {
 
             socket.emit(
@@ -716,18 +823,16 @@ useEffect(() => {
             );
 
             return;
+
         }
 
 
-        // Tell other user we are typing
         socket.emit(
             "typing",
             selectedConversation._id
         );
 
 
-        // Wait 1 second after
-        // the last typed character
         typingTimeoutRef.current =
             setTimeout(() => {
 
@@ -748,7 +853,9 @@ useEffect(() => {
     const handleSendMessage = async () => {
 
         if (!messageText.trim()) {
+
             return;
+
         }
 
 
@@ -759,10 +866,10 @@ useEffect(() => {
             );
 
             return;
+
         }
 
 
-        // Stop typing
         if (typingTimeoutRef.current) {
 
             clearTimeout(
@@ -790,11 +897,13 @@ useEffect(() => {
                     method: "POST",
 
                     headers: {
+
                         "Content-Type":
                             "application/json",
 
                         Authorization:
                             `Bearer ${token}`
+
                     },
 
                     body: JSON.stringify({
@@ -806,6 +915,7 @@ useEffect(() => {
                             messageText
 
                     })
+
                 }
             );
 
@@ -828,30 +938,38 @@ useEffect(() => {
                 );
 
                 return;
+
             }
 
 
-            setMessages((previousMessages) => {
+            setMessages(
+                (previousMessages) => {
 
-                const alreadyExists =
-                    previousMessages.some(
-                        (previousMessage) =>
-                            previousMessage._id ===
-                            data.data._id
-                    );
+                    const alreadyExists =
+                        previousMessages.some(
+                            (previousMessage) =>
+                                previousMessage._id ===
+                                data.data._id
+                        );
 
 
-                if (alreadyExists) {
-                    return previousMessages;
+                    if (alreadyExists) {
+
+                        return previousMessages;
+
+                    }
+
+
+                    return [
+
+                        ...previousMessages,
+
+                        data.data
+
+                    ];
+
                 }
-
-
-                return [
-                    ...previousMessages,
-                    data.data
-                ];
-
-            });
+            );
 
 
             setMessageText("");
@@ -872,12 +990,20 @@ useEffect(() => {
 
     const handleLogout = () => {
 
-        localStorage.removeItem("token");
+        localStorage.removeItem(
+            "token"
+        );
 
-        setIsLoggedIn(false);
+        setIsLoggedIn(
+            false
+        );
 
     };
 
+
+    // =========================
+    // RETURN
+    // =========================
 
     return (
 
@@ -886,7 +1012,7 @@ useEffect(() => {
 
             {/* =========================
                 SIDEBAR
-            ========================== */}
+            ========================= */}
 
             <div className="sidebar">
 
@@ -896,7 +1022,9 @@ useEffect(() => {
 
 
                 <button
-                    onClick={handleLogout}
+                    onClick={
+                        handleLogout
+                    }
                 >
                     Logout
                 </button>
@@ -908,84 +1036,138 @@ useEffect(() => {
                             user._id !==
                             currentUser?._id
                     )
-                    .map((user) => (
+                    .map((user) => {
 
-                        <div
-                            className="chat-user"
-                            key={user._id}
-                            onClick={() =>
-                                handleUserClick(user)
-                            }
-                        >
+                        const conversation =
+                            conversations.find(
+                                (conversation) =>
+                                    conversation.participants.some(
+                                        (participant) =>
+                                            participant._id ===
+                                            user._id
+                                    )
+                            );
 
-                            <h3>
-    {user.username}
-</h3>
 
-<p>
-    {
-        conversations.find(
-            (conversation) =>
-                conversation.participants.some(
-                    (participant) =>
-                        participant._id === user._id
-                )
-        )?.lastMessage?.text || "No messages yet"
-    }
-</p>
+                        return (
 
-{
-    (() => {
-
-        const conversation =
-            conversations.find(
-                (conversation) =>
-                    conversation.participants.some(
-                        (participant) =>
-                            participant._id === user._id
-                    )
-            );
-
-        return conversation?.unreadCount > 0 ? (
-
-            <span className="unread-count">
-                {conversation.unreadCount}
-            </span>
-
-        ) : null;
-
-    })()
-}
-
-                            <span
+                            <div
                                 className={
-                                    user.isOnline
-                                        ? "online-status"
-                                        : "offline-status"
+                                    selectedUser?._id ===
+                                    user._id
+                                        ? "chat-user active"
+                                        : "chat-user"
+                                }
+
+                                key={
+                                    user._id
+                                }
+
+                                onClick={() =>
+                                    handleUserClick(
+                                        user
+                                    )
                                 }
                             >
 
-                                {user.isOnline
-                                    ? "● Online"
-                                    : "○ Offline"}
 
-                            </span>
+                                {/* AVATAR */}
 
-                        </div>
+                                <div className="user-avatar">
 
-                    ))}
+                                    {user.username
+                                        ?.charAt(0)
+                                        .toUpperCase()}
+
+                                </div>
+
+
+                                {/* USER INFO */}
+
+                                <div className="user-info">
+
+
+                                    <div className="user-name-row">
+
+                                        <h3>
+                                            {
+                                                user.username
+                                            }
+                                        </h3>
+
+
+                                        {conversation?.unreadCount >
+                                            0 && (
+
+                                            <span className="unread-count">
+
+                                                {
+                                                    conversation.unreadCount
+                                                }
+
+                                            </span>
+
+                                        )}
+
+                                    </div>
+
+
+                                    {/* LATEST MESSAGE */}
+
+                                    <p>
+
+                                        {
+                                            conversation
+                                                ?.lastMessage
+                                                ?.text ||
+                                            "No messages yet"
+                                        }
+
+                                    </p>
+
+
+                                    {/* ONLINE STATUS */}
+
+                                    <span
+                                        className={
+                                            user.isOnline
+                                                ? "online-status"
+                                                : "offline-status"
+                                        }
+                                    >
+
+                                        <span className="status-dot">
+                                            ●
+                                        </span>
+
+                                        {user.isOnline
+                                            ? "Online"
+                                            : "Offline"}
+
+                                    </span>
+
+
+                                </div>
+
+
+                            </div>
+
+                        );
+
+                    })}
+
 
             </div>
 
 
             {/* =========================
                 CHAT WINDOW
-            ========================== */}
+            ========================= */}
 
             <div className="chat-window">
 
 
-                {/* Header */}
+                {/* CHAT HEADER */}
 
                 <div className="chat-header">
 
@@ -993,39 +1175,68 @@ useEffect(() => {
 
                         <>
 
-                            <h2>
-                                {selectedUser.username}
-                            </h2>
+                            <div className="header-avatar">
+
+                                {selectedUser.username
+                                    ?.charAt(0)
+                                    .toUpperCase()}
+
+                            </div>
 
 
-                            <span
-                                className={
-                                    selectedUser.isOnline
-                                        ? "online-status"
-                                        : "offline-status"
-                                }
-                            >
+                            <div className="header-user-info">
 
-                                {selectedUser.isOnline
-                                    ? "● Online"
-                                    : "○ Offline"}
+                                <h2>
+                                    {
+                                        selectedUser.username
+                                    }
+                                </h2>
 
-                            </span>
+
+                                <span
+                                    className={
+                                        selectedUser.isOnline
+                                            ? "online-status"
+                                            : "offline-status"
+                                    }
+                                >
+
+                                    <span className="status-dot">
+                                        ●
+                                    </span>
+
+                                    {selectedUser.isOnline
+                                        ? "Online"
+                                        : "Offline"}
+
+                                </span>
+
+                            </div>
 
                         </>
 
                     ) : (
 
-                        <h2>
-                            Select a chat
-                        </h2>
+                        <div className="empty-header">
+
+                            <h2>
+                                Select a chat
+                            </h2>
+
+                            <p>
+                                Choose a user to start chatting
+                            </p>
+
+                        </div>
 
                     )}
 
                 </div>
 
 
-                {/* Messages */}
+                {/* =========================
+                    MESSAGES
+                ========================= */}
 
                 <div className="messages">
 
@@ -1053,6 +1264,7 @@ useEffect(() => {
                                             key={
                                                 message._id
                                             }
+
                                             className={
                                                 isMyMessage
                                                     ? "message-row my-message"
@@ -1069,8 +1281,8 @@ useEffect(() => {
                                                     {isMyMessage
                                                         ? "You"
                                                         : message
-                                                              .sender
-                                                              ?.username ||
+                                                            .sender
+                                                            ?.username ||
                                                           "User"}
 
                                                 </strong>
@@ -1085,9 +1297,11 @@ useEffect(() => {
 
                                                 <small>
 
-                                                    {formatMessageTime(
-                                                        message.createdAt
-                                                    )}
+                                                    {
+                                                        formatMessageTime(
+                                                            message.createdAt
+                                                        )
+                                                    }
 
 
                                                     {isMyMessage && (
@@ -1099,7 +1313,9 @@ useEffect(() => {
                                                                     : "message-ticks"
                                                             }
                                                         >
+
                                                             ✓✓
+
                                                         </span>
 
                                                     )}
@@ -1125,14 +1341,22 @@ useEffect(() => {
 
                     ) : (
 
-                        <p>
-                            No conversation selected
-                        </p>
+                        <div className="empty-chat">
+
+                            <h3>
+                                Welcome to Chat
+                            </h3>
+
+                            <p>
+                                Select a user from the sidebar to start a conversation.
+                            </p>
+
+                        </div>
 
                     )}
 
 
-                    {/* Typing indicator */}
+                    {/* TYPING INDICATOR */}
 
                     {isOtherUserTyping &&
                         selectedUser && (
@@ -1147,28 +1371,37 @@ useEffect(() => {
                         )}
 
 
-                    {/* Auto-scroll */}
+                    {/* AUTO SCROLL */}
 
                     <div
-                        ref={messagesEndRef}
+                        ref={
+                            messagesEndRef
+                        }
                     ></div>
 
                 </div>
 
 
-                {/* Message Input */}
+                {/* =========================
+                    MESSAGE INPUT
+                ========================= */}
 
                 <div className="message-input">
 
                     <input
                         type="text"
                         placeholder="Type a message..."
-                        value={messageText}
-                        onChange={handleTyping}
+                        value={
+                            messageText
+                        }
+                        onChange={
+                            handleTyping
+                        }
                         onKeyDown={(e) => {
 
                             if (
-                                e.key === "Enter"
+                                e.key ===
+                                "Enter"
                             ) {
 
                                 handleSendMessage();
@@ -1189,7 +1422,9 @@ useEffect(() => {
 
                 </div>
 
+
             </div>
+
 
         </div>
 

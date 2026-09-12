@@ -5,16 +5,21 @@ function Login({ setIsLoggedIn }) {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
 
-    
+
     const handleLogin = async () => {
+
         try {
+
             const response = await fetch(
                 "https://real-time-chat-app-hgdr.onrender.com/api/auth/login",
                 {
                     method: "POST",
+
                     headers: {
-                        "Content-Type": "application/json"
+                        "Content-Type":
+                            "application/json"
                     },
+
                     body: JSON.stringify({
                         email,
                         password
@@ -22,48 +27,102 @@ function Login({ setIsLoggedIn }) {
                 }
             );
 
-           const data = await response.json();
 
-        console.log(data);
+            const data =
+                await response.json();
 
-        if (!response.ok) {
-            alert(data.error || data.message || "Login failed");
-            return;
-        }
 
-        localStorage.setItem("token", data.token);
-        setIsLoggedIn(true);
+            console.log(data);
 
-        alert("Login successful!");
+
+            if (!response.ok) {
+
+                alert(
+                    data.error ||
+                    data.message ||
+                    "Login failed"
+                );
+
+                return;
+
+            }
+
+
+            localStorage.setItem(
+                "token",
+                data.token
+            );
+
+
+            setIsLoggedIn(true);
+
+
+            alert(
+                "Login successful!"
+            );
+
 
         } catch (error) {
+
             console.log(error);
+
+            alert(
+                "Cannot connect to backend"
+            );
+
         }
+
     };
 
+
     return (
-        <div>
-            <h1>Login</h1>
 
-            <input
-                type="email"
-                placeholder="Email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-            />
+        <div className="auth-container">
 
-            <input
-                type="password"
-                placeholder="Password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-            />
+            <div className="auth-card">
 
-            <button onClick={handleLogin}>
-                Login
-            </button>
+                <h1>
+                    Welcome Back
+                </h1>
+
+                <p className="auth-subtitle">
+                    Login to continue chatting
+                </p>
+
+
+                <input
+                    type="email"
+                    placeholder="Email"
+                    value={email}
+                    onChange={(e) =>
+                        setEmail(e.target.value)
+                    }
+                />
+
+
+                <input
+                    type="password"
+                    placeholder="Password"
+                    value={password}
+                    onChange={(e) =>
+                        setPassword(e.target.value)
+                    }
+                />
+
+
+                <button
+                    className="auth-button"
+                    onClick={handleLogin}
+                >
+                    Login
+                </button>
+
+            </div>
+
         </div>
+
     );
+
 }
 
 export default Login;
