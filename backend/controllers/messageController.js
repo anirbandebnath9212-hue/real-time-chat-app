@@ -16,8 +16,6 @@ const sendMessage = async (req, res) => {
         } = req.body;
 
 
-        // Find conversation
-
         const conversation =
             await Conversation.findById(
                 conversationId
@@ -36,8 +34,6 @@ const sendMessage = async (req, res) => {
         }
 
 
-        // Create message
-
         const message =
             await Message.create({
 
@@ -51,8 +47,6 @@ const sendMessage = async (req, res) => {
             });
 
 
-        // Update latest message
-
         conversation.lastMessage =
             message._id;
 
@@ -60,15 +54,11 @@ const sendMessage = async (req, res) => {
         await conversation.save();
 
 
-        // Get Socket.IO
-
         const io =
             req.app.get("io");
 
 
-        // =========================
-        // SEND TO CONVERSATION ROOM
-        // =========================
+        // Send to conversation room
 
         io.to(
             conversationId.toString()
@@ -78,9 +68,7 @@ const sendMessage = async (req, res) => {
         );
 
 
-        // =========================
-        // SEND TO PERSONAL ROOMS
-        // =========================
+        // Send to personal rooms
 
         conversation.participants.forEach(
             (participantId) => {
@@ -95,10 +83,6 @@ const sendMessage = async (req, res) => {
             }
         );
 
-
-        // =========================
-        // RESPONSE
-        // =========================
 
         res.status(201).json({
 
@@ -126,7 +110,6 @@ const sendMessage = async (req, res) => {
     }
 
 };
-
 
 
 // =========================
@@ -182,7 +165,6 @@ const getMessages = async (req, res) => {
 };
 
 
-
 // =========================
 // MARK MESSAGES AS READ
 // =========================
@@ -194,9 +176,6 @@ const markMessagesAsRead = async (req, res) => {
         const conversationId =
             req.params.conversationId;
 
-
-        // Find unread messages
-        // that were not sent by me
 
         const messages =
             await Message.find({
@@ -213,8 +192,6 @@ const markMessagesAsRead = async (req, res) => {
             });
 
 
-        // No unread messages
-
         if (messages.length === 0) {
 
             return res.status(200).json({
@@ -226,8 +203,6 @@ const markMessagesAsRead = async (req, res) => {
 
         }
 
-
-        // Mark messages as read
 
         await Message.updateMany(
 
@@ -255,14 +230,9 @@ const markMessagesAsRead = async (req, res) => {
         );
 
 
-        // Get Socket.IO
-
         const io =
             req.app.get("io");
 
-
-        // Tell conversation
-        // that messages were read
 
         io.to(
             conversationId.toString()
@@ -282,8 +252,6 @@ const markMessagesAsRead = async (req, res) => {
 
         );
 
-
-        // Response
 
         res.status(200).json({
 
@@ -313,6 +281,274 @@ const markMessagesAsRead = async (req, res) => {
 };
 
 
+// =========================
+// DELETE MESSAGE
+// =========================
+
+const deleteMessage = async (req, res) => {
+
+    try {
+
+        const messageId =
+            req.params.id;
+
+
+        // Find message
+
+        const message =
+            await Message.findById(
+                messageId
+            );
+
+
+        if (!message) {
+
+            return res.status(404).json({
+
+                message:
+                    "Message not found"
+
+            });
+
+        }
+
+
+        // Make sure the logged-in user
+        // owns this message
+
+        if (
+            message.sender.toString() !==
+            req.user.toString()
+        ) {
+
+            return res.status(403).json({
+
+                message:
+                    "You can only delete your own messages"
+
+            });
+
+        }
+
+
+        const conversationId =
+            message.conversationId;
+
+
+        // Delete message
+
+        await Message.findByIdAndDelete(
+            messageId
+        );
+
+
+        // Update last message
+
+        const conversation =
+            await Conversation.findById(
+                conversationId
+            );
+
+
+        if (
+            conversation &&
+            conversation.lastMessage?.toString() ===
+            messageId.toString()
+        ) {
+
+            const previousMessage =
+                await Message
+                    .findOne({
+                        conversationId:
+                            conversationId
+                    })
+                    .sort({
+                        createdAt: -1
+                    });
+
+
+            conversation.lastMessage =
+                previousMessage
+                    ? previousMessage._id
+                    : null;
+
+
+            await conversation.save();
+
+        }
+
+
+        // Socket.IO
+
+        const io =
+            req.app.get("io");
+
+
+        io.to(
+            conversationId.toString()
+        ).emit(
+
+            "messageDeleted",
+
+            {
+
+                messageId:
+                    messageId,
+
+                conversationId:
+                    conversationId
+
+            }
+
+        );
+
+
+        res.status(200).json({
+
+            message:
+                "Message deleted successfully",
+
+            messageId:
+                messageId
+
+        });
+
+
+    } catch (error) {
+
+        res.status(500).json({
+
+            message:
+                "Server error",
+
+            error:
+                error.message
+
+        });
+
+    }
+
+};
+
+// =========================
+// EDIT MESSAGE
+// =========================
+
+const editMessage = async (req, res) => {
+
+    try {
+
+        const messageId =
+            req.params.id;
+
+        const { text } =
+            req.body;
+
+
+        // Find message
+
+        const message =
+            await Message.findById(
+                messageId
+            );
+
+
+        if (!message) {
+
+            return res.status(404).json({
+
+                message:
+                    "Message not found"
+
+            });
+
+        }
+
+
+        // Make sure the logged-in user
+        // owns this message
+
+        if (
+            message.sender.toString() !==
+            req.user.toString()
+        ) {
+
+            return res.status(403).json({
+
+                message:
+                    "You can only edit your own messages"
+
+            });
+
+        }
+
+
+        // Check text
+
+        if (!text || !text.trim()) {
+
+            return res.status(400).json({
+
+                message:
+                    "Message text is required"
+
+            });
+
+        }
+
+
+        // Update message
+
+        message.text =
+            text.trim();
+
+
+        await message.save();
+
+
+        // Socket.IO
+
+        const io =
+            req.app.get("io");
+
+
+        io.to(
+            message.conversationId.toString()
+        ).emit(
+
+            "messageEdited",
+
+            message
+
+        );
+
+
+        res.status(200).json({
+
+            message:
+                "Message edited successfully",
+
+            data:
+                message
+
+        });
+
+
+    } catch (error) {
+
+        res.status(500).json({
+
+            message:
+                "Server error",
+
+            error:
+                error.message
+
+        });
+
+    }
+
+};
 
 // =========================
 // EXPORT
@@ -324,6 +560,9 @@ module.exports = {
 
     getMessages,
 
-    markMessagesAsRead
+    markMessagesAsRead,
 
+    deleteMessage,
+
+    editMessage
 };

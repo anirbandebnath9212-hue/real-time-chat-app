@@ -11,13 +11,18 @@ function ChatDashboard({ setIsLoggedIn }) {
     const [currentUser, setCurrentUser] = useState(null);
     const [selectedUser, setSelectedUser] = useState(null);
 
-    // Typing indicator
-    const [isOtherUserTyping, setIsOtherUserTyping] = useState(false);
+    // Search
+    const [searchText, setSearchText] = useState("");
 
-    // Timer for typing
+    // Edit profile
+    const [isEditingProfile, setIsEditingProfile] = useState(false);
+    const [newUsername, setNewUsername] = useState("");
+
+    // Typing
+    const [isOtherUserTyping, setIsOtherUserTyping] = useState(false);
     const typingTimeoutRef = useRef(null);
 
-    // Auto-scroll
+    // Auto scroll
     const messagesEndRef = useRef(null);
 
 
@@ -105,8 +110,6 @@ function ChatDashboard({ setIsLoggedIn }) {
             );
 
 
-            // UPDATE SIDEBAR
-
             setConversations(
                 (previousConversations) => {
 
@@ -155,8 +158,6 @@ function ChatDashboard({ setIsLoggedIn }) {
             );
 
 
-            // CHECK CURRENT CHAT
-
             if (
                 !selectedConversation ||
                 message.conversationId.toString() !==
@@ -167,8 +168,6 @@ function ChatDashboard({ setIsLoggedIn }) {
 
             }
 
-
-            // ADD MESSAGE TO CURRENT CHAT
 
             setMessages(
                 (previousMessages) => {
@@ -218,6 +217,101 @@ function ChatDashboard({ setIsLoggedIn }) {
         selectedConversation,
         currentUser
     ]);
+
+
+    // =========================
+    // MESSAGE DELETED
+    // =========================
+
+    useEffect(() => {
+
+        const handleMessageDeleted = (data) => {
+
+            console.log(
+                "Message deleted:",
+                data
+            );
+
+
+            // Remove message from chat
+
+            setMessages(
+                (previousMessages) => {
+
+                    return previousMessages.filter(
+                        (message) =>
+                            message._id !==
+                            data.messageId
+                    );
+
+                }
+            );
+
+
+            // Update sidebar preview
+
+            setConversations(
+                (previousConversations) => {
+
+                    return previousConversations.map(
+                        (conversation) => {
+
+                            if (
+                                conversation._id.toString() !==
+                                data.conversationId.toString()
+                            ) {
+
+                                return conversation;
+
+                            }
+
+
+                            // If deleted message
+                            // was the latest message
+
+                            if (
+                                conversation.lastMessage?._id ===
+                                data.messageId
+                            ) {
+
+                                return {
+
+                                    ...conversation,
+
+                                    lastMessage: null
+
+                                };
+
+                            }
+
+
+                            return conversation;
+
+                        }
+                    );
+
+                }
+            );
+
+        };
+
+
+        socket.on(
+            "messageDeleted",
+            handleMessageDeleted
+        );
+
+
+        return () => {
+
+            socket.off(
+                "messageDeleted",
+                handleMessageDeleted
+            );
+
+        };
+
+    }, []);
 
 
     // =========================
@@ -278,8 +372,6 @@ function ChatDashboard({ setIsLoggedIn }) {
             }
 
 
-            // REMOVE UNREAD COUNT
-
             setConversations(
                 (previousConversations) => {
 
@@ -339,20 +431,12 @@ function ChatDashboard({ setIsLoggedIn }) {
 
         const handleUserTyping = () => {
 
-            console.log(
-                "Other user is typing..."
-            );
-
             setIsOtherUserTyping(true);
 
         };
 
 
         const handleUserStoppedTyping = () => {
-
-            console.log(
-                "Other user stopped typing"
-            );
 
             setIsOtherUserTyping(false);
 
@@ -414,12 +498,6 @@ function ChatDashboard({ setIsLoggedIn }) {
 
                 const data =
                     await response.json();
-
-
-                console.log(
-                    "Current user:",
-                    data
-                );
 
 
                 if (!response.ok) {
@@ -489,12 +567,6 @@ function ChatDashboard({ setIsLoggedIn }) {
                     await response.json();
 
 
-                console.log(
-                    "All users:",
-                    data
-                );
-
-
                 if (!response.ok) {
 
                     return;
@@ -522,7 +594,7 @@ function ChatDashboard({ setIsLoggedIn }) {
 
 
     // =========================
-    // GET MY CONVERSATIONS
+    // GET CONVERSATIONS
     // =========================
 
     useEffect(() => {
@@ -548,12 +620,6 @@ function ChatDashboard({ setIsLoggedIn }) {
 
                 const data =
                     await response.json();
-
-
-                console.log(
-                    "My conversations:",
-                    data
-                );
 
 
                 if (!response.ok) {
@@ -634,9 +700,6 @@ function ChatDashboard({ setIsLoggedIn }) {
                 await response.json();
 
 
-            console.log(data);
-
-
             if (!response.ok) {
 
                 alert(
@@ -664,14 +727,6 @@ function ChatDashboard({ setIsLoggedIn }) {
             );
 
 
-            console.log(
-                "Joined conversation:",
-                conversation._id
-            );
-
-
-            // GET MESSAGES
-
             const messageResponse =
                 await fetch(
                     `https://real-time-chat-app-hgdr.onrender.com/api/messages/${conversation._id}`,
@@ -691,17 +746,7 @@ function ChatDashboard({ setIsLoggedIn }) {
                 await messageResponse.json();
 
 
-            console.log(
-                "Conversation messages:",
-                messageData
-            );
-
-
             if (!messageResponse.ok) {
-
-                console.log(
-                    "Failed to fetch messages"
-                );
 
                 return;
 
@@ -712,8 +757,6 @@ function ChatDashboard({ setIsLoggedIn }) {
                 messageData.messages
             );
 
-
-            // MARK MESSAGES AS READ
 
             const readResponse =
                 await fetch(
@@ -741,8 +784,6 @@ function ChatDashboard({ setIsLoggedIn }) {
                 readData
             );
 
-
-            // Remove unread count locally
 
             setConversations(
                 (previousConversations) => {
@@ -924,12 +965,6 @@ function ChatDashboard({ setIsLoggedIn }) {
                 await response.json();
 
 
-            console.log(
-                "Send message response:",
-                data
-            );
-
-
             if (!response.ok) {
 
                 alert(
@@ -961,11 +996,8 @@ function ChatDashboard({ setIsLoggedIn }) {
 
 
                     return [
-
                         ...previousMessages,
-
                         data.data
-
                     ];
 
                 }
@@ -978,6 +1010,296 @@ function ChatDashboard({ setIsLoggedIn }) {
         } catch (error) {
 
             console.log(error);
+
+        }
+
+    };
+
+
+    // =========================
+    // DELETE MESSAGE
+    // =========================
+
+    const handleDeleteMessage = async (messageId) => {
+
+        const confirmDelete =
+            window.confirm(
+                "Are you sure you want to delete this message?"
+            );
+
+
+        if (!confirmDelete) {
+
+            return;
+
+        }
+
+
+        try {
+
+            const token =
+                localStorage.getItem("token");
+
+
+            const response = await fetch(
+                `https://real-time-chat-app-hgdr.onrender.com/api/messages/${messageId}`,
+                {
+                    method: "DELETE",
+
+                    headers: {
+
+                        Authorization:
+                            `Bearer ${token}`
+
+                    }
+
+                }
+            );
+
+
+            const data =
+                await response.json();
+
+
+            console.log(
+                "Delete response:",
+                data
+            );
+
+
+            if (!response.ok) {
+
+                alert(
+                    data.message ||
+                    "Failed to delete message"
+                );
+
+                return;
+
+            }
+
+
+            // Remove immediately
+
+            setMessages(
+                (previousMessages) => {
+
+                    return previousMessages.filter(
+                        (message) =>
+                            message._id !==
+                            messageId
+                    );
+
+                }
+            );
+
+
+            // Update sidebar
+
+            setConversations(
+                (previousConversations) => {
+
+                    return previousConversations.map(
+                        (conversation) => {
+
+                            if (
+                                conversation.lastMessage?._id ===
+                                messageId
+                            ) {
+
+                                return {
+
+                                    ...conversation,
+
+                                    lastMessage: null
+
+                                };
+
+                            }
+
+
+                            return conversation;
+
+                        }
+                    );
+
+                }
+            );
+
+
+        } catch (error) {
+
+            console.log(error);
+
+            alert(
+                "Cannot connect to server"
+            );
+
+        }
+
+    };
+
+
+    // =========================
+    // START EDIT PROFILE
+    // =========================
+
+    const handleEditProfile = () => {
+
+        setNewUsername(
+            currentUser?.username || ""
+        );
+
+        setIsEditingProfile(
+            true
+        );
+
+    };
+
+
+    // =========================
+    // CANCEL EDIT
+    // =========================
+
+    const handleCancelEdit = () => {
+
+        setNewUsername("");
+
+        setIsEditingProfile(
+            false
+        );
+
+    };
+
+
+    // =========================
+    // UPDATE PROFILE
+    // =========================
+
+    const handleUpdateProfile = async () => {
+
+        if (!newUsername.trim()) {
+
+            alert(
+                "Username cannot be empty"
+            );
+
+            return;
+
+        }
+
+
+        try {
+
+            const token =
+                localStorage.getItem("token");
+
+
+            const response = await fetch(
+                "https://real-time-chat-app-hgdr.onrender.com/api/users/profile",
+                {
+                    method: "PATCH",
+
+                    headers: {
+
+                        "Content-Type":
+                            "application/json",
+
+                        Authorization:
+                            `Bearer ${token}`
+
+                    },
+
+                    body: JSON.stringify({
+
+                        username:
+                            newUsername
+
+                    })
+
+                }
+            );
+
+
+            const data =
+                await response.json();
+
+
+            if (!response.ok) {
+
+                alert(
+                    data.message ||
+                    "Failed to update profile"
+                );
+
+                return;
+
+            }
+
+
+            setCurrentUser(
+                (previousUser) => ({
+
+                    ...previousUser,
+
+                    username:
+                        data.user.username
+
+                })
+            );
+
+
+            setUsers(
+                (previousUsers) => {
+
+                    return previousUsers.map(
+                        (user) => {
+
+                            if (
+                                user._id ===
+                                data.user.id
+                            ) {
+
+                                return {
+
+                                    ...user,
+
+                                    username:
+                                        data.user.username
+
+                                };
+
+                            }
+
+
+                            return user;
+
+                        }
+                    );
+
+                }
+            );
+
+
+            setNewUsername("");
+
+            setIsEditingProfile(
+                false
+            );
+
+
+            alert(
+                "Profile updated successfully!"
+            );
+
+
+        } catch (error) {
+
+            console.log(error);
+
+            alert(
+                "Cannot connect to server"
+            );
 
         }
 
@@ -1002,6 +1324,34 @@ function ChatDashboard({ setIsLoggedIn }) {
 
 
     // =========================
+    // FILTER USERS
+    // =========================
+
+    const filteredUsers =
+        users.filter((user) => {
+
+            if (
+                user._id ===
+                currentUser?._id
+            ) {
+
+                return false;
+
+            }
+
+
+            return user.username
+                .toLowerCase()
+                .includes(
+                    searchText
+                        .toLowerCase()
+                        .trim()
+                );
+
+        });
+
+
+    // =========================
     // RETURN
     // =========================
 
@@ -1016,10 +1366,144 @@ function ChatDashboard({ setIsLoggedIn }) {
 
             <div className="sidebar">
 
-                <h2>
-                    Chats
-                </h2>
 
+                {/* PROFILE */}
+
+                {currentUser && (
+
+                    <div className="profile-card">
+
+                        <div className="profile-avatar">
+
+                            {currentUser.username
+                                ?.charAt(0)
+                                .toUpperCase()}
+
+                        </div>
+
+
+                        {!isEditingProfile ? (
+
+                            <div className="profile-info">
+
+                                <h3>
+                                    {
+                                        currentUser.username
+                                    }
+                                </h3>
+
+
+                                <p>
+                                    {
+                                        currentUser.email
+                                    }
+                                </p>
+
+
+                                <span className="profile-online">
+
+                                    <span className="status-dot">
+                                        ●
+                                    </span>
+
+                                    Online
+
+                                </span>
+
+
+                                <button
+                                    className="edit-profile-button"
+                                    onClick={
+                                        handleEditProfile
+                                    }
+                                >
+                                    Edit Profile
+                                </button>
+
+                            </div>
+
+                        ) : (
+
+                            <div className="profile-edit">
+
+                                <input
+                                    type="text"
+                                    value={
+                                        newUsername
+                                    }
+                                    onChange={(e) =>
+                                        setNewUsername(
+                                            e.target.value
+                                        )
+                                    }
+                                    placeholder="Enter username"
+                                />
+
+
+                                <div className="profile-edit-buttons">
+
+                                    <button
+                                        className="save-profile-button"
+                                        onClick={
+                                            handleUpdateProfile
+                                        }
+                                    >
+                                        Save
+                                    </button>
+
+
+                                    <button
+                                        className="cancel-profile-button"
+                                        onClick={
+                                            handleCancelEdit
+                                        }
+                                    >
+                                        Cancel
+                                    </button>
+
+                                </div>
+
+                            </div>
+
+                        )}
+
+                    </div>
+
+                )}
+
+
+                {/* SIDEBAR TITLE */}
+
+                <div className="sidebar-title">
+
+                    <h2>
+                        Chats
+                    </h2>
+
+                </div>
+
+
+                {/* SEARCH */}
+
+                <div className="search-box">
+
+                    <input
+                        type="text"
+                        placeholder="Search users..."
+                        value={
+                            searchText
+                        }
+                        onChange={(e) =>
+                            setSearchText(
+                                e.target.value
+                            )
+                        }
+                    />
+
+                </div>
+
+
+                {/* LOGOUT */}
 
                 <button
                     onClick={
@@ -1030,13 +1514,11 @@ function ChatDashboard({ setIsLoggedIn }) {
                 </button>
 
 
-                {users
-                    .filter(
-                        (user) =>
-                            user._id !==
-                            currentUser?._id
-                    )
-                    .map((user) => {
+                {/* USERS */}
+
+                {filteredUsers.length > 0 ? (
+
+                    filteredUsers.map((user) => {
 
                         const conversation =
                             conversations.find(
@@ -1070,9 +1552,6 @@ function ChatDashboard({ setIsLoggedIn }) {
                                 }
                             >
 
-
-                                {/* AVATAR */}
-
                                 <div className="user-avatar">
 
                                     {user.username
@@ -1082,10 +1561,7 @@ function ChatDashboard({ setIsLoggedIn }) {
                                 </div>
 
 
-                                {/* USER INFO */}
-
                                 <div className="user-info">
-
 
                                     <div className="user-name-row">
 
@@ -1112,8 +1588,6 @@ function ChatDashboard({ setIsLoggedIn }) {
                                     </div>
 
 
-                                    {/* LATEST MESSAGE */}
-
                                     <p>
 
                                         {
@@ -1125,8 +1599,6 @@ function ChatDashboard({ setIsLoggedIn }) {
 
                                     </p>
 
-
-                                    {/* ONLINE STATUS */}
 
                                     <span
                                         className={
@@ -1146,16 +1618,25 @@ function ChatDashboard({ setIsLoggedIn }) {
 
                                     </span>
 
-
                                 </div>
-
 
                             </div>
 
                         );
 
-                    })}
+                    })
 
+                ) : (
+
+                    <div className="no-users">
+
+                        <p>
+                            No users found
+                        </p>
+
+                    </div>
+
+                )}
 
             </div>
 
@@ -1167,7 +1648,7 @@ function ChatDashboard({ setIsLoggedIn }) {
             <div className="chat-window">
 
 
-                {/* CHAT HEADER */}
+                {/* HEADER */}
 
                 <div className="chat-header">
 
@@ -1322,6 +1803,24 @@ function ChatDashboard({ setIsLoggedIn }) {
 
                                                 </small>
 
+
+                                                {/* DELETE */}
+
+                                                {isMyMessage && (
+
+                                                    <button
+                                                        className="delete-message-button"
+                                                        onClick={() =>
+                                                            handleDeleteMessage(
+                                                                message._id
+                                                            )
+                                                        }
+                                                    >
+                                                        Delete
+                                                    </button>
+
+                                                )}
+
                                             </div>
 
                                         </div>
@@ -1356,7 +1855,7 @@ function ChatDashboard({ setIsLoggedIn }) {
                     )}
 
 
-                    {/* TYPING INDICATOR */}
+                    {/* TYPING */}
 
                     {isOtherUserTyping &&
                         selectedUser && (
@@ -1371,8 +1870,6 @@ function ChatDashboard({ setIsLoggedIn }) {
                         )}
 
 
-                    {/* AUTO SCROLL */}
-
                     <div
                         ref={
                             messagesEndRef
@@ -1382,9 +1879,7 @@ function ChatDashboard({ setIsLoggedIn }) {
                 </div>
 
 
-                {/* =========================
-                    MESSAGE INPUT
-                ========================= */}
+                {/* MESSAGE INPUT */}
 
                 <div className="message-input">
 
@@ -1424,7 +1919,6 @@ function ChatDashboard({ setIsLoggedIn }) {
 
 
             </div>
-
 
         </div>
 

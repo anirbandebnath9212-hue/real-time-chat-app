@@ -3,15 +3,22 @@ const express = require("express");
 const {
     sendMessage,
     getMessages,
-    markMessagesAsRead
+    markMessagesAsRead,
+    deleteMessage,
+    editMessage
 } = require("../controllers/messageController");
 
-const protect = require("../middleware/authMiddleware");
+const protect =
+    require("../middleware/authMiddleware");
 
-const router = express.Router();
+const router =
+    express.Router();
 
 
-// Send message
+// =========================
+// SEND MESSAGE
+// =========================
+
 router.post(
     "/",
     protect,
@@ -19,7 +26,10 @@ router.post(
 );
 
 
-// Get messages
+// =========================
+// GET MESSAGES
+// =========================
+
 router.get(
     "/:conversationId",
     protect,
@@ -27,7 +37,10 @@ router.get(
 );
 
 
-// Mark messages as read
+// =========================
+// MARK AS READ
+// =========================
+
 router.patch(
     "/read/:conversationId",
     protect,
@@ -35,4 +48,25 @@ router.patch(
 );
 
 
+// =========================
+// DELETE MESSAGE
+// =========================
+
+router.delete(
+    "/:id",
+    protect,
+    deleteMessage
+);
+
+
 module.exports = router;
+
+// =========================
+// EDIT MESSAGE
+// =========================
+
+router.patch(
+    "/:id",
+    protect,
+    editMessage
+);
