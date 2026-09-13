@@ -2272,13 +2272,51 @@ const handleFileChange = async (e) => {
                                                 )}
 
 
-                                                {/* ACTUAL MESSAGE */}
+                                               {/* ACTUAL MESSAGE */}
 
-                                                <p>
-                                                    {
-                                                        message.text
-                                                    }
-                                                </p>
+{message.type === "image" && message.fileUrl && (
+
+    <img
+        src={message.fileUrl}
+        alt={message.fileName || "Image"}
+        className="chat-image"
+    />
+
+)}
+
+
+{message.type === "video" && message.fileUrl && (
+
+    <video
+        src={message.fileUrl}
+        controls
+        className="chat-video"
+    />
+
+)}
+
+
+{message.type === "file" && message.fileUrl && (
+
+    <a
+        href={message.fileUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="chat-file"
+    >
+        📎 {message.fileName || "Open file"}
+    </a>
+
+)}
+
+
+{message.type === "text" && (
+
+    <p>
+        {message.text}
+    </p>
+
+)}
 
 
                                                 {/* TIME */}
