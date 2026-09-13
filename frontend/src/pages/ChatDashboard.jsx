@@ -17,14 +17,12 @@ function ChatDashboard({ setIsLoggedIn }) {
     const [selectedUser, setSelectedUser] =
         useState(null);
 
-
     // =========================
     // MESSAGE MENU
     // =========================
 
     const [openMessageMenu, setOpenMessageMenu] =
         useState(null);
-
 
     // =========================
     // REPLY
@@ -33,14 +31,12 @@ function ChatDashboard({ setIsLoggedIn }) {
     const [replyingTo, setReplyingTo] =
         useState(null);
 
-
     // =========================
     // SEARCH
     // =========================
 
     const [searchText, setSearchText] =
         useState("");
-
 
     // =========================
     // EDIT PROFILE
@@ -52,7 +48,6 @@ function ChatDashboard({ setIsLoggedIn }) {
     const [newUsername, setNewUsername] =
         useState("");
 
-
     // =========================
     // TYPING
     // =========================
@@ -62,7 +57,6 @@ function ChatDashboard({ setIsLoggedIn }) {
 
     const typingTimeoutRef =
         useRef(null);
-
 
     // =========================
     // MESSAGE SCROLLING
@@ -74,6 +68,15 @@ function ChatDashboard({ setIsLoggedIn }) {
     const messagesContainerRef =
         useRef(null);
 
+    const shouldScrollToBottomRef =
+        useRef(false);
+
+    // =========================
+    // FILE UPLOAD
+    // =========================
+
+    const fileInputRef =
+        useRef(null);
 
     // =========================
     // FORMAT MESSAGE TIME
@@ -90,6 +93,245 @@ function ChatDashboard({ setIsLoggedIn }) {
 
 
     // =========================
+    // OPEN FILE SELECTOR
+    // =========================
+
+    const handleAttachmentClick = () => {
+
+        fileInputRef.current?.click();
+
+    };
+
+
+    // =========================
+    // FILE SELECTED
+    // =========================
+
+const handleFileChange = async (e) => {
+
+    const file =
+        e.target.files[0];
+
+    if (!file) {
+        return;
+    }
+
+
+    // =========================
+    // CHECK CHAT
+    // =========================
+
+    if (!selectedConversation) {
+
+        alert(
+            "Please select a chat first"
+        );
+
+        return;
+
+    }
+
+
+    try {
+
+        console.log(
+            "Uploading file:",
+            file.name
+        );
+
+
+        // =========================
+        // GET TOKEN
+        // =========================
+
+        const token =
+            localStorage.getItem("token");
+
+
+        // =========================
+        // CREATE FORM DATA
+        // =========================
+
+        const formData =
+            new FormData();
+
+        formData.append(
+            "file",
+            file
+        );
+
+
+        // =========================
+        // UPLOAD TO CLOUDINARY
+        // =========================
+
+        const uploadResponse =
+            await fetch(
+                "http://localhost:5000/api/upload",
+                {
+                    method: "POST",
+
+                    headers: {
+
+                        Authorization:
+                            `Bearer ${token}`
+
+                    },
+
+                    body:
+                        formData
+
+                }
+            );
+
+
+        const uploadData =
+            await uploadResponse.json();
+
+
+        console.log(
+            "Upload response:",
+            uploadData
+        );
+
+
+        if (!uploadResponse.ok) {
+
+            alert(
+                uploadData.message ||
+                "File upload failed"
+            );
+
+            return;
+
+        }
+
+
+        // =========================
+        // SEND FILE AS MESSAGE
+        // =========================
+
+        const messageResponse =
+            await fetch(
+                "http://localhost:5000/api/messages",
+                {
+                    method: "POST",
+
+                    headers: {
+
+                        "Content-Type":
+                            "application/json",
+
+                        Authorization:
+                            `Bearer ${token}`
+
+                    },
+
+                    body: JSON.stringify({
+
+                        conversationId:
+                            selectedConversation._id,
+
+                        type:
+                            uploadData.type,
+
+                        fileUrl:
+                            uploadData.fileUrl,
+
+                        fileName:
+                            uploadData.fileName,
+
+                        fileSize:
+                            uploadData.fileSize
+
+                    })
+
+                }
+            );
+
+
+        const messageData =
+            await messageResponse.json();
+
+
+        console.log(
+            "Message response:",
+            messageData
+        );
+
+
+        if (!messageResponse.ok) {
+
+            alert(
+                messageData.message ||
+                "Failed to send file message"
+            );
+
+            return;
+
+        }
+
+
+        // =========================
+        // ADD MESSAGE TO CHAT
+        // =========================
+
+        setMessages(
+            (previousMessages) => {
+
+                const alreadyExists =
+                    previousMessages.some(
+                        (previousMessage) =>
+                            previousMessage._id ===
+                            messageData.data._id
+                    );
+
+
+                if (alreadyExists) {
+
+                    return previousMessages;
+
+                }
+
+
+                return [
+                    ...previousMessages,
+                    messageData.data
+                ];
+
+            }
+        );
+
+
+        console.log(
+            "File message sent successfully!"
+        );
+
+
+    } catch (error) {
+
+        console.log(
+            "File message error:",
+            error
+        );
+
+
+        alert(
+            "Cannot connect to local backend"
+        );
+
+    }
+
+
+    // Reset input so the same file
+    // can be selected again.
+
+    e.target.value = "";
+
+};
+
+
+    // =========================
     // SMART AUTO SCROLL
     // =========================
 
@@ -98,23 +340,31 @@ function ChatDashboard({ setIsLoggedIn }) {
         const container =
             messagesContainerRef.current;
 
-
         if (!container) {
-
             return;
-
         }
 
+        if (
+            shouldScrollToBottomRef.current
+        ) {
+
+            messagesEndRef.current?.scrollIntoView({
+                behavior: "auto"
+            });
+
+            shouldScrollToBottomRef.current =
+                false;
+
+            return;
+        }
 
         const distanceFromBottom =
             container.scrollHeight -
             container.scrollTop -
             container.clientHeight;
 
-
         const isNearBottom =
             distanceFromBottom < 150;
-
 
         if (isNearBottom) {
 
@@ -139,7 +389,6 @@ function ChatDashboard({ setIsLoggedIn }) {
                 "Socket connected:",
                 socket.id
             );
-
 
             if (selectedConversation) {
 
@@ -222,7 +471,6 @@ function ChatDashboard({ setIsLoggedIn }) {
                                 };
 
                             }
-
 
                             return conversation;
 
@@ -326,9 +574,6 @@ function ChatDashboard({ setIsLoggedIn }) {
             );
 
 
-            // If deleted message was
-            // the message we were replying to
-
             setReplyingTo(
                 (previousReply) => {
 
@@ -340,7 +585,6 @@ function ChatDashboard({ setIsLoggedIn }) {
                         return null;
 
                     }
-
 
                     return previousReply;
 
@@ -458,7 +702,6 @@ function ChatDashboard({ setIsLoggedIn }) {
 
                                 }
 
-
                                 return message;
 
                             }
@@ -490,7 +733,6 @@ function ChatDashboard({ setIsLoggedIn }) {
                                 };
 
                             }
-
 
                             return conversation;
 
@@ -887,6 +1129,10 @@ function ChatDashboard({ setIsLoggedIn }) {
             }
 
 
+            shouldScrollToBottomRef.current =
+                true;
+
+
             setMessages(
                 messageData.messages
             );
@@ -939,7 +1185,6 @@ function ChatDashboard({ setIsLoggedIn }) {
                                 };
 
                             }
-
 
                             return item;
 
@@ -1999,19 +2244,25 @@ function ChatDashboard({ setIsLoggedIn }) {
                                                             ↩
                                                         </span>
 
+
                                                         <div>
 
                                                             <strong>
+
                                                                 {
                                                                     message.replyTo.sender?.username ||
                                                                     "User"
                                                                 }
+
                                                             </strong>
 
+
                                                             <p>
+
                                                                 {
                                                                     message.replyTo.text
                                                                 }
+
                                                             </p>
 
                                                         </div>
@@ -2021,7 +2272,7 @@ function ChatDashboard({ setIsLoggedIn }) {
                                                 )}
 
 
-                                                {/* MESSAGE TEXT */}
+                                                {/* ACTUAL MESSAGE */}
 
                                                 <p>
                                                     {
@@ -2030,7 +2281,7 @@ function ChatDashboard({ setIsLoggedIn }) {
                                                 </p>
 
 
-                                                {/* MESSAGE TIME */}
+                                                {/* TIME */}
 
                                                 <small>
 
@@ -2065,9 +2316,6 @@ function ChatDashboard({ setIsLoggedIn }) {
 
                                                     <div className="message-menu">
 
-
-                                                        {/* REPLY */}
-
                                                         <button
                                                             onClick={() =>
                                                                 handleReply(
@@ -2079,14 +2327,13 @@ function ChatDashboard({ setIsLoggedIn }) {
                                                         </button>
 
 
-                                                        {/* COPY */}
-
                                                         <button
                                                             onClick={() => {
 
                                                                 navigator.clipboard.writeText(
                                                                     message.text
                                                                 );
+
 
                                                                 setOpenMessageMenu(
                                                                     null
@@ -2098,8 +2345,6 @@ function ChatDashboard({ setIsLoggedIn }) {
                                                         </button>
 
 
-                                                        {/* EDIT */}
-
                                                         {isMyMessage && (
 
                                                             <button>
@@ -2108,8 +2353,6 @@ function ChatDashboard({ setIsLoggedIn }) {
 
                                                         )}
 
-
-                                                        {/* DELETE */}
 
                                                         {isMyMessage && (
 
@@ -2208,6 +2451,7 @@ function ChatDashboard({ setIsLoggedIn }) {
                                 Replying to
                             </span>
 
+
                             <strong>
 
                                 {
@@ -2216,6 +2460,7 @@ function ChatDashboard({ setIsLoggedIn }) {
                                 }
 
                             </strong>
+
 
                             <p>
                                 {
@@ -2245,6 +2490,36 @@ function ChatDashboard({ setIsLoggedIn }) {
                 ========================= */}
 
                 <div className="message-input">
+
+                    {/* HIDDEN FILE INPUT */}
+
+                    <input
+                        ref={
+                            fileInputRef
+                        }
+                        type="file"
+                        style={{
+                            display: "none"
+                        }}
+                        onChange={
+                            handleFileChange
+                        }
+                    />
+
+
+                    {/* ATTACHMENT BUTTON */}
+
+                    <button
+                        type="button"
+                        className="attachment-button"
+                        onClick={
+                            handleAttachmentClick
+                        }
+                        title="Attach a file"
+                    >
+                        📎
+                    </button>
+
 
                     <input
                         type="text"

@@ -13,35 +13,63 @@ const sendMessage = async (req, res) => {
         const {
             conversationId,
             text,
-            replyTo
+            replyTo,
+            type,
+            fileUrl,
+            fileName,
+            fileSize
         } = req.body;
 
+
+        // =========================
+        // CHECK CONVERSATION
+        // =========================
 
         const conversation =
             await Conversation.findById(
                 conversationId
             );
 
-
         if (!conversation) {
 
             return res.status(404).json({
-                message: "Conversation not found"
+                message:
+                    "Conversation not found"
             });
 
         }
 
 
-        if (!text || !text.trim()) {
+        // =========================
+        // CHECK MESSAGE CONTENT
+        // =========================
+
+        const isMediaMessage =
+            type &&
+            type !== "text" &&
+            fileUrl;
+
+        const isTextMessage =
+            text &&
+            text.trim();
+
+
+        if (
+            !isTextMessage &&
+            !isMediaMessage
+        ) {
 
             return res.status(400).json({
-                message: "Message text is required"
+                message:
+                    "Message text or file is required"
             });
 
         }
 
 
-        // Check reply message
+        // =========================
+        // CHECK REPLY
+        // =========================
 
         if (replyTo) {
 
@@ -50,11 +78,11 @@ const sendMessage = async (req, res) => {
                     replyTo
                 );
 
-
             if (!replyMessage) {
 
                 return res.status(404).json({
-                    message: "Reply message not found"
+                    message:
+                        "Reply message not found"
                 });
 
             }
@@ -66,7 +94,8 @@ const sendMessage = async (req, res) => {
             ) {
 
                 return res.status(400).json({
-                    message: "Invalid reply message"
+                    message:
+                        "Invalid reply message"
                 });
 
             }
@@ -74,7 +103,9 @@ const sendMessage = async (req, res) => {
         }
 
 
-        // Create message
+        // =========================
+        // CREATE MESSAGE
+        // =========================
 
         const message =
             await Message.create({
@@ -84,8 +115,22 @@ const sendMessage = async (req, res) => {
                 sender:
                     req.user,
 
+                type:
+                    type || "text",
+
                 text:
-                    text.trim(),
+                    text
+                        ? text.trim()
+                        : "",
+
+                fileUrl:
+                    fileUrl || "",
+
+                fileName:
+                    fileName || "",
+
+                fileSize:
+                    fileSize || 0,
 
                 replyTo:
                     replyTo || null
@@ -93,7 +138,9 @@ const sendMessage = async (req, res) => {
             });
 
 
-        // Update last message
+        // =========================
+        // UPDATE LAST MESSAGE
+        // =========================
 
         conversation.lastMessage =
             message._id;
@@ -101,17 +148,22 @@ const sendMessage = async (req, res) => {
         await conversation.save();
 
 
-        // Populate message
+        // =========================
+        // POPULATE MESSAGE
+        // =========================
 
         const populatedMessage =
             await Message
-                .findById(message._id)
+                .findById(
+                    message._id
+                )
                 .populate(
                     "sender",
                     "-password"
                 )
                 .populate({
                     path: "replyTo",
+
                     populate: {
                         path: "sender",
                         select: "-password"
@@ -166,6 +218,11 @@ const sendMessage = async (req, res) => {
 
     } catch (error) {
 
+        console.error(
+            "Send message error:",
+            error
+        );
+
         res.status(500).json({
 
             message:
@@ -195,20 +252,18 @@ const getMessages = async (req, res) => {
                     conversationId:
                         req.params.conversationId
                 })
-
                 .populate(
                     "sender",
                     "-password"
                 )
-
                 .populate({
                     path: "replyTo",
+
                     populate: {
                         path: "sender",
                         select: "-password"
                     }
                 })
-
                 .sort({
                     createdAt: 1
                 });
@@ -310,12 +365,10 @@ const markMessagesAsRead = async (req, res) => {
             "messagesRead",
 
             {
-
                 conversationId,
 
                 userId:
                     req.user
-
             }
 
         );
@@ -447,11 +500,9 @@ const deleteMessage = async (req, res) => {
             "messageDeleted",
 
             {
-
                 messageId,
 
                 conversationId
-
             }
 
         );
@@ -495,10 +546,8 @@ const editMessage = async (req, res) => {
         const messageId =
             req.params.id;
 
-
-        const {
-            text
-        } = req.body;
+        const { text } =
+            req.body;
 
 
         const message =
@@ -534,7 +583,10 @@ const editMessage = async (req, res) => {
         }
 
 
-        if (!text || !text.trim()) {
+        if (
+            !text ||
+            !text.trim()
+        ) {
 
             return res.status(400).json({
 
