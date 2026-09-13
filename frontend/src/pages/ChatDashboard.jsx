@@ -1,21 +1,57 @@
-import { useEffect, useRef, useState } from "react";
+import {
+    useEffect,
+    useRef,
+    useState
+} from "react";
+
+import {
+    useNavigate
+} from "react-router-dom";
+
 import socket from "../socket";
+
 
 function ChatDashboard({ setIsLoggedIn }) {
 
-    const [users, setUsers] = useState([]);
-    const [conversations, setConversations] = useState([]);
+    const navigate =
+        useNavigate();
+
+
+    // =========================
+    // USERS
+    // =========================
+
+    const [users, setUsers] =
+        useState([]);
+
+    const [conversations, setConversations] =
+        useState([]);
+
     const [selectedConversation, setSelectedConversation] =
         useState(null);
 
-    const [messages, setMessages] = useState([]);
-    const [messageText, setMessageText] = useState("");
+
+    // =========================
+    // MESSAGES
+    // =========================
+
+    const [messages, setMessages] =
+        useState([]);
+
+    const [messageText, setMessageText] =
+        useState("");
+
+
+    // =========================
+    // CURRENT USER
+    // =========================
 
     const [currentUser, setCurrentUser] =
         useState(null);
 
     const [selectedUser, setSelectedUser] =
         useState(null);
+
 
     // =========================
     // MESSAGE MENU
@@ -24,6 +60,7 @@ function ChatDashboard({ setIsLoggedIn }) {
     const [openMessageMenu, setOpenMessageMenu] =
         useState(null);
 
+
     // =========================
     // REPLY
     // =========================
@@ -31,12 +68,14 @@ function ChatDashboard({ setIsLoggedIn }) {
     const [replyingTo, setReplyingTo] =
         useState(null);
 
+
     // =========================
     // SEARCH
     // =========================
 
     const [searchText, setSearchText] =
         useState("");
+
 
     // =========================
     // EDIT PROFILE
@@ -48,6 +87,7 @@ function ChatDashboard({ setIsLoggedIn }) {
     const [newUsername, setNewUsername] =
         useState("");
 
+
     // =========================
     // TYPING
     // =========================
@@ -57,6 +97,7 @@ function ChatDashboard({ setIsLoggedIn }) {
 
     const typingTimeoutRef =
         useRef(null);
+
 
     // =========================
     // MESSAGE SCROLLING
@@ -71,6 +112,7 @@ function ChatDashboard({ setIsLoggedIn }) {
     const shouldScrollToBottomRef =
         useRef(false);
 
+
     // =========================
     // FILE UPLOAD
     // =========================
@@ -78,16 +120,20 @@ function ChatDashboard({ setIsLoggedIn }) {
     const fileInputRef =
         useRef(null);
 
+
     // =========================
     // FORMAT MESSAGE TIME
     // =========================
 
     const formatMessageTime = (date) => {
 
-        return new Date(date).toLocaleTimeString([], {
-            hour: "2-digit",
-            minute: "2-digit"
-        });
+        return new Date(date).toLocaleTimeString(
+            [],
+            {
+                hour: "2-digit",
+                minute: "2-digit"
+            }
+        );
 
     };
 
@@ -172,15 +218,12 @@ function ChatDashboard({ setIsLoggedIn }) {
                         method: "POST",
 
                         headers: {
-
                             Authorization:
                                 `Bearer ${token}`
-
                         },
 
                         body:
                             formData
-
                     }
                 );
 
@@ -224,7 +267,6 @@ function ChatDashboard({ setIsLoggedIn }) {
 
                             Authorization:
                                 `Bearer ${token}`
-
                         },
 
                         body: JSON.stringify({
@@ -245,7 +287,6 @@ function ChatDashboard({ setIsLoggedIn }) {
                                 uploadData.fileSize
 
                         })
-
                     }
                 );
 
@@ -624,7 +665,8 @@ function ChatDashboard({ setIsLoggedIn }) {
 
                                     ...conversation,
 
-                                    lastMessage: null
+                                    lastMessage:
+                                        null
 
                                 };
 
@@ -736,7 +778,8 @@ function ChatDashboard({ setIsLoggedIn }) {
 
                                     ...conversation,
 
-                                    unreadCount: 0
+                                    unreadCount:
+                                        0
 
                                 };
 
@@ -843,18 +886,18 @@ function ChatDashboard({ setIsLoggedIn }) {
                     localStorage.getItem("token");
 
 
-                const response = await fetch(
-                    "https://real-time-chat-app-hgdr.onrender.com/api/auth/me",
-                    {
-                        headers: {
+                const response =
+                    await fetch(
+                        "https://real-time-chat-app-hgdr.onrender.com/api/auth/me",
+                        {
+                            headers: {
 
-                            Authorization:
-                                `Bearer ${token}`
+                                Authorization:
+                                    `Bearer ${token}`
 
+                            }
                         }
-
-                    }
-                );
+                    );
 
 
                 const data =
@@ -919,18 +962,18 @@ function ChatDashboard({ setIsLoggedIn }) {
                     localStorage.getItem("token");
 
 
-                const response = await fetch(
-                    "https://real-time-chat-app-hgdr.onrender.com/api/users",
-                    {
-                        headers: {
+                const response =
+                    await fetch(
+                        "https://real-time-chat-app-hgdr.onrender.com/api/users",
+                        {
+                            headers: {
 
-                            Authorization:
-                                `Bearer ${token}`
+                                Authorization:
+                                    `Bearer ${token}`
 
+                            }
                         }
-
-                    }
-                );
+                    );
 
 
                 const data =
@@ -979,18 +1022,18 @@ function ChatDashboard({ setIsLoggedIn }) {
                     localStorage.getItem("token");
 
 
-                const response = await fetch(
-                    "https://real-time-chat-app-hgdr.onrender.com/api/conversations",
-                    {
-                        headers: {
+                const response =
+                    await fetch(
+                        "https://real-time-chat-app-hgdr.onrender.com/api/conversations",
+                        {
+                            headers: {
 
-                            Authorization:
-                                `Bearer ${token}`
+                                Authorization:
+                                    `Bearer ${token}`
 
+                            }
                         }
-
-                    }
-                );
+                    );
 
 
                 const data =
@@ -1057,30 +1100,30 @@ function ChatDashboard({ setIsLoggedIn }) {
             );
 
 
-            const response = await fetch(
-                "https://real-time-chat-app-hgdr.onrender.com/api/conversations",
-                {
-                    method: "POST",
+            const response =
+                await fetch(
+                    "https://real-time-chat-app-hgdr.onrender.com/api/conversations",
+                    {
+                        method: "POST",
 
-                    headers: {
+                        headers: {
 
-                        "Content-Type":
-                            "application/json",
+                            "Content-Type":
+                                "application/json",
 
-                        Authorization:
-                            `Bearer ${token}`
+                            Authorization:
+                                `Bearer ${token}`
 
-                    },
+                        },
 
-                    body: JSON.stringify({
+                        body: JSON.stringify({
 
-                        userId:
-                            user._id
+                            userId:
+                                user._id
 
-                    })
-
-                }
-            );
+                        })
+                    }
+                );
 
 
             const data =
@@ -1124,7 +1167,6 @@ function ChatDashboard({ setIsLoggedIn }) {
                                 `Bearer ${token}`
 
                         }
-
                     }
                 );
 
@@ -1161,7 +1203,6 @@ function ChatDashboard({ setIsLoggedIn }) {
                                 `Bearer ${token}`
 
                         }
-
                     }
                 );
 
@@ -1191,7 +1232,8 @@ function ChatDashboard({ setIsLoggedIn }) {
 
                                     ...item,
 
-                                    unreadCount: 0
+                                    unreadCount:
+                                        0
 
                                 };
 
@@ -1356,36 +1398,37 @@ function ChatDashboard({ setIsLoggedIn }) {
                 localStorage.getItem("token");
 
 
-            const response = await fetch(
-                "https://real-time-chat-app-hgdr.onrender.com/api/messages",
-                {
-                    method: "POST",
+            const response =
+                await fetch(
+                    "https://real-time-chat-app-hgdr.onrender.com/api/messages",
+                    {
+                        method: "POST",
 
-                    headers: {
+                        headers: {
 
-                        "Content-Type":
-                            "application/json",
+                            "Content-Type":
+                                "application/json",
 
-                        Authorization:
-                            `Bearer ${token}`
+                            Authorization:
+                                `Bearer ${token}`
 
-                    },
+                        },
 
-                    body: JSON.stringify({
+                        body: JSON.stringify({
 
-                        conversationId:
-                            selectedConversation._id,
+                            conversationId:
+                                selectedConversation._id,
 
-                        text:
-                            messageText,
+                            text:
+                                messageText,
 
-                        replyTo:
-                            replyingTo?._id || null
+                            replyTo:
+                                replyingTo?._id ||
+                                null
 
-                    })
-
-                }
-            );
+                        })
+                    }
+                );
 
 
             const data =
@@ -1431,7 +1474,9 @@ function ChatDashboard({ setIsLoggedIn }) {
             );
 
 
-            setMessageText("");
+            setMessageText(
+                ""
+            );
 
 
             setReplyingTo(
@@ -1475,20 +1520,20 @@ function ChatDashboard({ setIsLoggedIn }) {
                 localStorage.getItem("token");
 
 
-            const response = await fetch(
-                `https://real-time-chat-app-hgdr.onrender.com/api/messages/${messageId}`,
-                {
-                    method: "DELETE",
+            const response =
+                await fetch(
+                    `https://real-time-chat-app-hgdr.onrender.com/api/messages/${messageId}`,
+                    {
+                        method: "DELETE",
 
-                    headers: {
+                        headers: {
 
-                        Authorization:
-                            `Bearer ${token}`
+                            Authorization:
+                                `Bearer ${token}`
 
+                        }
                     }
-
-                }
-            );
+                );
 
 
             const data =
@@ -1546,7 +1591,8 @@ function ChatDashboard({ setIsLoggedIn }) {
 
                                     ...conversation,
 
-                                    lastMessage: null
+                                    lastMessage:
+                                        null
 
                                 };
 
@@ -1585,7 +1631,8 @@ function ChatDashboard({ setIsLoggedIn }) {
     const handleEditProfile = () => {
 
         setNewUsername(
-            currentUser?.username || ""
+            currentUser?.username ||
+            ""
         );
 
 
@@ -1637,30 +1684,30 @@ function ChatDashboard({ setIsLoggedIn }) {
                 localStorage.getItem("token");
 
 
-            const response = await fetch(
-                "https://real-time-chat-app-hgdr.onrender.com/api/users/profile",
-                {
-                    method: "PATCH",
+            const response =
+                await fetch(
+                    "https://real-time-chat-app-hgdr.onrender.com/api/users/profile",
+                    {
+                        method: "PATCH",
 
-                    headers: {
+                        headers: {
 
-                        "Content-Type":
-                            "application/json",
+                            "Content-Type":
+                                "application/json",
 
-                        Authorization:
-                            `Bearer ${token}`
+                            Authorization:
+                                `Bearer ${token}`
 
-                    },
+                        },
 
-                    body: JSON.stringify({
+                        body: JSON.stringify({
 
-                        username:
-                            newUsername
+                            username:
+                                newUsername
 
-                    })
-
-                }
-            );
+                        })
+                    }
+                );
 
 
             const data =
@@ -1952,17 +1999,6 @@ function ChatDashboard({ setIsLoggedIn }) {
                 </div>
 
 
-                {/* LOGOUT */}
-
-                <button
-                    onClick={
-                        handleLogout
-                    }
-                >
-                    Logout
-                </button>
-
-
                 {/* USERS */}
 
                 {filteredUsers.length > 0 ? (
@@ -2087,6 +2123,37 @@ function ChatDashboard({ setIsLoggedIn }) {
 
                 )}
 
+
+                {/* =========================
+                    SIDEBAR BOTTOM ACTIONS
+                ========================= */}
+
+                <div className="sidebar-bottom">
+
+                    <button
+                        type="button"
+                        onClick={() => {
+                            navigate("/settings");
+                        }}
+                    >
+                        ⚙️ Settings
+                    </button>
+
+
+                    {/* LOGOUT */}
+
+                    <button
+                        type="button"
+                        onClick={
+                            handleLogout
+                        }
+                    >
+                        🚪 Logout
+                    </button>
+
+                </div>
+
+
             </div>
 
 
@@ -2171,7 +2238,9 @@ function ChatDashboard({ setIsLoggedIn }) {
 
                 <div
                     className="messages"
-                    ref={messagesContainerRef}
+                    ref={
+                        messagesContainerRef
+                    }
                 >
 
                     {selectedConversation ? (
@@ -2253,7 +2322,9 @@ function ChatDashboard({ setIsLoggedIn }) {
                                                     message.fileUrl && (
 
                                                         <img
-                                                            src={message.fileUrl}
+                                                            src={
+                                                                message.fileUrl
+                                                            }
                                                             alt={
                                                                 message.fileName ||
                                                                 "Image"
@@ -2268,7 +2339,9 @@ function ChatDashboard({ setIsLoggedIn }) {
                                                     message.fileUrl && (
 
                                                         <video
-                                                            src={message.fileUrl}
+                                                            src={
+                                                                message.fileUrl
+                                                            }
                                                             controls
                                                             className="chat-video"
                                                         />
@@ -2280,7 +2353,9 @@ function ChatDashboard({ setIsLoggedIn }) {
                                                     message.fileUrl && (
 
                                                         <a
-                                                            href={message.fileUrl}
+                                                            href={
+                                                                message.fileUrl
+                                                            }
                                                             target="_blank"
                                                             rel="noopener noreferrer"
                                                             className="chat-file"
@@ -2381,7 +2456,8 @@ function ChatDashboard({ setIsLoggedIn }) {
                                                             onClick={() => {
 
                                                                 navigator.clipboard.writeText(
-                                                                    message.text || ""
+                                                                    message.text ||
+                                                                    ""
                                                                 );
 
 

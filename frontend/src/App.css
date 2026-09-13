@@ -55,6 +55,9 @@ body {
 
     height: 100vh;
 
+    display: flex;
+    flex-direction: column;
+
     padding: 20px;
 
     overflow-y: auto;
@@ -1999,4 +2002,59 @@ body {
 
         font-size: 9px;
     }
+}
+
+/* =========================================================
+   SIDEBAR BOTTOM ACTIONS
+========================================================= */
+
+.sidebar-bottom {
+    margin-top: auto;
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 8px;
+
+    padding-top: 15px;
+
+    border-top: 1px solid #1b1b1b;
+}
+
+
+.sidebar-bottom button {
+    width: 100%;
+
+    padding: 10px 12px;
+
+    border: 1px solid #222222;
+
+    border-radius: 9px;
+
+    background: #101010;
+
+    color: #999999;
+
+    font-family: inherit;
+
+    font-size: 12px;
+
+    text-align: left;
+
+    cursor: pointer;
+
+    transition:
+        background 0.2s ease,
+        color 0.2s ease,
+        border-color 0.2s ease;
+}
+
+
+.sidebar-bottom button:hover {
+    background: #181818;
+
+    border-color: #333333;
+
+    color: #ffffff;
 }

@@ -35,20 +35,36 @@ const server =
 
 
 // =========================
+// ALLOWED FRONTENDS
+// =========================
+
+const allowedOrigins = [
+
+    "http://localhost:5173",
+
+    "https://real-time-chat-app-drab-omega.vercel.app"
+
+];
+
+
+// =========================
 // SOCKET.IO
 // =========================
 
 const io =
     new Server(server, {
+
         cors: {
-            origin:
-                process.env.FRONTEND_URL,
+
+            origin: allowedOrigins,
 
             methods: [
                 "GET",
                 "POST"
             ]
+
         }
+
     });
 
 
@@ -66,8 +82,53 @@ app.set(
 // =========================
 
 app.use(
-    cors()
+    cors({
+
+        origin: function (
+            origin,
+            callback
+        ) {
+
+            // Allow requests without
+            // an origin
+
+            if (!origin) {
+
+                return callback(
+                    null,
+                    true
+                );
+
+            }
+
+
+            if (
+                allowedOrigins.includes(
+                    origin
+                )
+            ) {
+
+                return callback(
+                    null,
+                    true
+                );
+
+            }
+
+
+            return callback(
+                new Error(
+                    "Not allowed by CORS"
+                )
+            );
+
+        },
+
+        credentials: true
+
+    })
 );
+
 
 app.use(
     express.json()
@@ -113,8 +174,10 @@ app.get(
     (req, res) => {
 
         res.json({
+
             message:
                 "Real-Time Chat App Backend is running"
+
         });
 
     }
@@ -151,6 +214,7 @@ io.on(
                             isOnline: true
                         }
                     );
+
 
                     socket.userId =
                         userId;

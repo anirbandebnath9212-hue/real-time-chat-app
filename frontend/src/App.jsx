@@ -1,75 +1,84 @@
-import { useEffect, useState } from "react";
-import "./App.css";
+import {
+    BrowserRouter,
+    Routes,
+    Route,
+    Navigate
+} from "react-router-dom";
 
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import ChatDashboard from "./pages/ChatDashboard";
+import Settings from "./pages/Settings";
+
+import "./App.css";
+
 
 function App() {
 
-    const [showLogin, setShowLogin] = useState(true);
-
-    const [isLoggedIn, setIsLoggedIn] = useState(
-        !!localStorage.getItem("token")
-    );
-
-
-    // Check token when app starts
-    useEffect(() => {
-
-        const token =
-            localStorage.getItem("token");
-
-        if (token) {
-            setIsLoggedIn(true);
-        } else {
-            setIsLoggedIn(false);
-        }
-
-    }, []);
-
-
-    // Show dashboard if logged in
-    if (isLoggedIn) {
-        return (
-            <ChatDashboard
-                setIsLoggedIn={setIsLoggedIn}
-            />
-        );
-    }
-
-
-    // Show login/register
     return (
-        <div>
 
-            {showLogin ? (
+        <BrowserRouter>
 
-                <Login
-                    setIsLoggedIn={setIsLoggedIn}
+            <Routes>
+
+                {/* LOGIN */}
+
+                <Route
+                    path="/"
+                    element={
+                        <Login />
+                    }
                 />
 
-            ) : (
 
-                <Register />
+                {/* REGISTER */}
 
-            )}
+                <Route
+                    path="/register"
+                    element={
+                        <Register />
+                    }
+                />
 
 
-            <button
-                onClick={() =>
-                    setShowLogin(!showLogin)
-                }
-            >
+                {/* CHAT */}
 
-                {showLogin
-                    ? "Create an account"
-                    : "Already have an account?"}
+                <Route
+                    path="/chat"
+                    element={
+                        <ChatDashboard />
+                    }
+                />
 
-            </button>
 
-        </div>
+                {/* SETTINGS */}
+
+                <Route
+                    path="/settings"
+                    element={
+                        <Settings />
+                    }
+                />
+
+
+                {/* UNKNOWN ROUTE */}
+
+                <Route
+                    path="*"
+                    element={
+                        <Navigate
+                            to="/"
+                            replace
+                        />
+                    }
+                />
+
+            </Routes>
+
+        </BrowserRouter>
+
     );
+
 }
 
 export default App;
