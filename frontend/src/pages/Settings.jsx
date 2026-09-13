@@ -1,6 +1,10 @@
-import React from "react";
+import { useNavigate } from "react-router-dom";
+
 
 function Settings() {
+
+    const navigate = useNavigate();
+
 
     return (
 
@@ -10,7 +14,20 @@ function Settings() {
 
                 <div className="settings-header">
 
-                    <h1>⚙️ Settings</h1>
+                    <button
+                        className="settings-back"
+                        onClick={() =>
+                            navigate("/chat")
+                        }
+                    >
+                        ← Back to Chat
+                    </button>
+
+
+                    <h1>
+                        ⚙️ Settings
+                    </h1>
+
 
                     <p>
                         Manage your account and preferences
@@ -19,56 +36,38 @@ function Settings() {
                 </div>
 
 
-                {/* ACCOUNT */}
+                {/* =========================
+                    ACCOUNT
+                ========================= */}
 
                 <div className="settings-section">
 
-                    <h3>ACCOUNT</h3>
+                    <h3>
+                        ACCOUNT
+                    </h3>
 
-                    <button className="settings-item">
-                        <span>👤</span>
 
-                        <div>
-                            <strong>My Account</strong>
-                            <p>View your account information</p>
-                        </div>
+                    <button
+                        className="settings-item"
+                    >
 
-                        <span className="settings-arrow">
-                            ›
+                        <span>
+                            👤
                         </span>
-                    </button>
 
-
-                    <button className="settings-item">
-                        <span>✏️</span>
 
                         <div>
-                            <strong>Edit Profile</strong>
-                            <p>Change your profile information</p>
+
+                            <strong>
+                                My Account
+                            </strong>
+
+                            <p>
+                                View your account information
+                            </p>
+
                         </div>
 
-                        <span className="settings-arrow">
-                            ›
-                        </span>
-                    </button>
-
-                </div>
-
-
-                {/* PREFERENCES */}
-
-                <div className="settings-section">
-
-                    <h3>PREFERENCES</h3>
-
-                    <button className="settings-item">
-
-                        <span>🌙</span>
-
-                        <div>
-                            <strong>Appearance</strong>
-                            <p>Customize the look of the app</p>
-                        </div>
 
                         <span className="settings-arrow">
                             ›
@@ -77,14 +76,27 @@ function Settings() {
                     </button>
 
 
-                    <button className="settings-item">
+                    <button
+                        className="settings-item"
+                    >
 
-                        <span>🔔</span>
+                        <span>
+                            ✏️
+                        </span>
+
 
                         <div>
-                            <strong>Notifications</strong>
-                            <p>Manage notification preferences</p>
+
+                            <strong>
+                                Edit Profile
+                            </strong>
+
+                            <p>
+                                Change your profile information
+                            </p>
+
                         </div>
+
 
                         <span className="settings-arrow">
                             ›
@@ -95,20 +107,38 @@ function Settings() {
                 </div>
 
 
-                {/* PRIVACY */}
+                {/* =========================
+                    PREFERENCES
+                ========================= */}
 
                 <div className="settings-section">
 
-                    <h3>PRIVACY & SECURITY</h3>
+                    <h3>
+                        PREFERENCES
+                    </h3>
 
-                    <button className="settings-item">
 
-                        <span>🔒</span>
+                    <button
+                        className="settings-item"
+                    >
+
+                        <span>
+                            🌙
+                        </span>
+
 
                         <div>
-                            <strong>Privacy</strong>
-                            <p>Manage your privacy settings</p>
+
+                            <strong>
+                                Appearance
+                            </strong>
+
+                            <p>
+                                Customize the look of the app
+                            </p>
+
                         </div>
+
 
                         <span className="settings-arrow">
                             ›
@@ -117,14 +147,27 @@ function Settings() {
                     </button>
 
 
-                    <button className="settings-item">
+                    <button
+                        className="settings-item"
+                    >
 
-                        <span>🛡️</span>
+                        <span>
+                            🔔
+                        </span>
+
 
                         <div>
-                            <strong>Security</strong>
-                            <p>Manage your account security</p>
+
+                            <strong>
+                                Notifications
+                            </strong>
+
+                            <p>
+                                Manage notification preferences
+                            </p>
+
                         </div>
+
 
                         <span className="settings-arrow">
                             ›
@@ -135,20 +178,38 @@ function Settings() {
                 </div>
 
 
-                {/* INFORMATION */}
+                {/* =========================
+                    PRIVACY & SECURITY
+                ========================= */}
 
                 <div className="settings-section">
 
-                    <h3>INFORMATION</h3>
+                    <h3>
+                        PRIVACY & SECURITY
+                    </h3>
 
-                    <button className="settings-item">
 
-                        <span>📜</span>
+                    <button
+                        className="settings-item"
+                    >
+
+                        <span>
+                            🔒
+                        </span>
+
 
                         <div>
-                            <strong>Privacy Policy</strong>
-                            <p>Read our privacy policy</p>
+
+                            <strong>
+                                Privacy
+                            </strong>
+
+                            <p>
+                                Manage your privacy settings
+                            </p>
+
                         </div>
+
 
                         <span className="settings-arrow">
                             ›
@@ -157,30 +218,27 @@ function Settings() {
                     </button>
 
 
-                    <button className="settings-item">
+                    <button
+                        className="settings-item"
+                    >
 
-                        <span>📋</span>
-
-                        <div>
-                            <strong>Terms & Conditions</strong>
-                            <p>Read our terms and conditions</p>
-                        </div>
-
-                        <span className="settings-arrow">
-                            ›
+                        <span>
+                            🛡️
                         </span>
 
-                    </button>
-
-
-                    <button className="settings-item">
-
-                        <span>ℹ️</span>
 
                         <div>
-                            <strong>About</strong>
-                            <p>About this chat application</p>
+
+                            <strong>
+                                Security
+                            </strong>
+
+                            <p>
+                                Manage your account security
+                            </p>
+
                         </div>
+
 
                         <span className="settings-arrow">
                             ›
@@ -191,20 +249,138 @@ function Settings() {
                 </div>
 
 
-                {/* DANGER ZONE */}
+                {/* =========================
+                    INFORMATION
+                ========================= */}
+
+                <div className="settings-section">
+
+                    <h3>
+                        INFORMATION
+                    </h3>
+
+
+                    <button
+                        className="settings-item"
+                    >
+
+                        <span>
+                            📜
+                        </span>
+
+
+                        <div>
+
+                            <strong>
+                                Privacy Policy
+                            </strong>
+
+                            <p>
+                                Read our privacy policy
+                            </p>
+
+                        </div>
+
+
+                        <span className="settings-arrow">
+                            ›
+                        </span>
+
+                    </button>
+
+
+                    <button
+                        className="settings-item"
+                    >
+
+                        <span>
+                            📋
+                        </span>
+
+
+                        <div>
+
+                            <strong>
+                                Terms & Conditions
+                            </strong>
+
+                            <p>
+                                Read our terms and conditions
+                            </p>
+
+                        </div>
+
+
+                        <span className="settings-arrow">
+                            ›
+                        </span>
+
+                    </button>
+
+
+                    <button
+                        className="settings-item"
+                    >
+
+                        <span>
+                            ℹ️
+                        </span>
+
+
+                        <div>
+
+                            <strong>
+                                About
+                            </strong>
+
+                            <p>
+                                About this chat application
+                            </p>
+
+                        </div>
+
+
+                        <span className="settings-arrow">
+                            ›
+                        </span>
+
+                    </button>
+
+                </div>
+
+
+                {/* =========================
+                    ACCOUNT ACTIONS
+                ========================= */}
 
                 <div className="settings-section danger-section">
 
-                    <h3>ACCOUNT ACTIONS</h3>
+                    <h3>
+                        ACCOUNT ACTIONS
+                    </h3>
 
-                    <button className="settings-item logout-item">
 
-                        <span>🚪</span>
+                    <button
+                        className="settings-item logout-item"
+                    >
+
+                        <span>
+                            🚪
+                        </span>
+
 
                         <div>
-                            <strong>Logout</strong>
-                            <p>Sign out of your account</p>
+
+                            <strong>
+                                Logout
+                            </strong>
+
+                            <p>
+                                Sign out of your account
+                            </p>
+
                         </div>
+
 
                         <span className="settings-arrow">
                             ›
@@ -213,14 +389,27 @@ function Settings() {
                     </button>
 
 
-                    <button className="settings-item delete-item">
+                    <button
+                        className="settings-item delete-item"
+                    >
 
-                        <span>🗑️</span>
+                        <span>
+                            🗑️
+                        </span>
+
 
                         <div>
-                            <strong>Delete Account</strong>
-                            <p>Permanently delete your account</p>
+
+                            <strong>
+                                Delete Account
+                            </strong>
+
+                            <p>
+                                Permanently delete your account
+                            </p>
+
                         </div>
+
 
                         <span className="settings-arrow">
                             ›
@@ -237,5 +426,6 @@ function Settings() {
     );
 
 }
+
 
 export default Settings;

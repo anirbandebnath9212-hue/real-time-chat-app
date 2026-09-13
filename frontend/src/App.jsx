@@ -5,6 +5,10 @@ import {
     Navigate
 } from "react-router-dom";
 
+import {
+    useState
+} from "react";
+
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import ChatDashboard from "./pages/ChatDashboard";
@@ -15,59 +19,133 @@ import "./App.css";
 
 function App() {
 
+    const [
+        isLoggedIn,
+        setIsLoggedIn
+    ] = useState(
+        !!localStorage.getItem("token")
+    );
+
+
     return (
 
         <BrowserRouter>
 
             <Routes>
 
-                {/* LOGIN */}
+                {/* =========================
+                    LOGIN
+                ========================= */}
 
                 <Route
                     path="/"
                     element={
-                        <Login />
+                        isLoggedIn ? (
+
+                            <Navigate
+                                to="/chat"
+                                replace
+                            />
+
+                        ) : (
+
+                            <Login
+                                setIsLoggedIn={
+                                    setIsLoggedIn
+                                }
+                            />
+
+                        )
                     }
                 />
 
 
-                {/* REGISTER */}
+                {/* =========================
+                    REGISTER
+                ========================= */}
 
                 <Route
                     path="/register"
                     element={
-                        <Register />
+                        isLoggedIn ? (
+
+                            <Navigate
+                                to="/chat"
+                                replace
+                            />
+
+                        ) : (
+
+                            <Register />
+
+                        )
                     }
                 />
 
 
-                {/* CHAT */}
+                {/* =========================
+                    CHAT
+                ========================= */}
 
                 <Route
                     path="/chat"
                     element={
-                        <ChatDashboard />
+                        isLoggedIn ? (
+
+                            <ChatDashboard
+                                setIsLoggedIn={
+                                    setIsLoggedIn
+                                }
+                            />
+
+                        ) : (
+
+                            <Navigate
+                                to="/"
+                                replace
+                            />
+
+                        )
                     }
                 />
 
 
-                {/* SETTINGS */}
+                {/* =========================
+                    SETTINGS
+                ========================= */}
 
                 <Route
                     path="/settings"
                     element={
-                        <Settings />
+                        isLoggedIn ? (
+
+                            <Settings />
+
+                        ) : (
+
+                            <Navigate
+                                to="/"
+                                replace
+                            />
+
+                        )
                     }
                 />
 
 
-                {/* UNKNOWN ROUTE */}
+                {/* =========================
+                    UNKNOWN ROUTE
+                ========================= */}
 
                 <Route
                     path="*"
                     element={
                         <Navigate
-                            to="/"
+                            to={
+                                isLoggedIn
+                                    ? "/chat"
+                                    : "/"
+                            }
                             replace
                         />
                     }
