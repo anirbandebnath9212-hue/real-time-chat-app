@@ -167,7 +167,7 @@ const handleFileChange = async (e) => {
 
         const uploadResponse =
             await fetch(
-                "http://localhost:5000/api/upload",
+                "https://real-time-chat-app-hgdr.onrender.com/api/upload",
                 {
                     method: "POST",
 
@@ -213,7 +213,7 @@ const handleFileChange = async (e) => {
 
         const messageResponse =
             await fetch(
-                "http://localhost:5000/api/messages",
+                "https://real-time-chat-app-hgdr.onrender.com/api/messages",
                 {
                     method: "POST",
 
