@@ -5,25 +5,74 @@ function ChatDashboard({ setIsLoggedIn }) {
 
     const [users, setUsers] = useState([]);
     const [conversations, setConversations] = useState([]);
-    const [selectedConversation, setSelectedConversation] = useState(null);
+    const [selectedConversation, setSelectedConversation] =
+        useState(null);
+
     const [messages, setMessages] = useState([]);
     const [messageText, setMessageText] = useState("");
-    const [currentUser, setCurrentUser] = useState(null);
-    const [selectedUser, setSelectedUser] = useState(null);
 
-    // Search
-    const [searchText, setSearchText] = useState("");
+    const [currentUser, setCurrentUser] =
+        useState(null);
 
-    // Edit profile
-    const [isEditingProfile, setIsEditingProfile] = useState(false);
-    const [newUsername, setNewUsername] = useState("");
+    const [selectedUser, setSelectedUser] =
+        useState(null);
 
-    // Typing
-    const [isOtherUserTyping, setIsOtherUserTyping] = useState(false);
-    const typingTimeoutRef = useRef(null);
 
-    // Auto scroll
-    const messagesEndRef = useRef(null);
+    // =========================
+    // MESSAGE MENU
+    // =========================
+
+    const [openMessageMenu, setOpenMessageMenu] =
+        useState(null);
+
+
+    // =========================
+    // REPLY
+    // =========================
+
+    const [replyingTo, setReplyingTo] =
+        useState(null);
+
+
+    // =========================
+    // SEARCH
+    // =========================
+
+    const [searchText, setSearchText] =
+        useState("");
+
+
+    // =========================
+    // EDIT PROFILE
+    // =========================
+
+    const [isEditingProfile, setIsEditingProfile] =
+        useState(false);
+
+    const [newUsername, setNewUsername] =
+        useState("");
+
+
+    // =========================
+    // TYPING
+    // =========================
+
+    const [isOtherUserTyping, setIsOtherUserTyping] =
+        useState(false);
+
+    const typingTimeoutRef =
+        useRef(null);
+
+
+    // =========================
+    // MESSAGE SCROLLING
+    // =========================
+
+    const messagesEndRef =
+        useRef(null);
+
+    const messagesContainerRef =
+        useRef(null);
 
 
     // =========================
@@ -41,14 +90,39 @@ function ChatDashboard({ setIsLoggedIn }) {
 
 
     // =========================
-    // AUTO SCROLL
+    // SMART AUTO SCROLL
     // =========================
 
     useEffect(() => {
 
-        messagesEndRef.current?.scrollIntoView({
-            behavior: "smooth"
-        });
+        const container =
+            messagesContainerRef.current;
+
+
+        if (!container) {
+
+            return;
+
+        }
+
+
+        const distanceFromBottom =
+            container.scrollHeight -
+            container.scrollTop -
+            container.clientHeight;
+
+
+        const isNearBottom =
+            distanceFromBottom < 150;
+
+
+        if (isNearBottom) {
+
+            messagesEndRef.current?.scrollIntoView({
+                behavior: "smooth"
+            });
+
+        }
 
     }, [messages]);
 
@@ -65,6 +139,7 @@ function ChatDashboard({ setIsLoggedIn }) {
                 "Socket connected:",
                 socket.id
             );
+
 
             if (selectedConversation) {
 
@@ -233,8 +308,6 @@ function ChatDashboard({ setIsLoggedIn }) {
             );
 
 
-            // Remove message from chat
-
             setMessages(
                 (previousMessages) => {
 
@@ -248,7 +321,32 @@ function ChatDashboard({ setIsLoggedIn }) {
             );
 
 
-            // Update sidebar preview
+            setOpenMessageMenu(
+                null
+            );
+
+
+            // If deleted message was
+            // the message we were replying to
+
+            setReplyingTo(
+                (previousReply) => {
+
+                    if (
+                        previousReply?._id ===
+                        data.messageId
+                    ) {
+
+                        return null;
+
+                    }
+
+
+                    return previousReply;
+
+                }
+            );
+
 
             setConversations(
                 (previousConversations) => {
@@ -265,9 +363,6 @@ function ChatDashboard({ setIsLoggedIn }) {
 
                             }
 
-
-                            // If deleted message
-                            // was the latest message
 
                             if (
                                 conversation.lastMessage?._id ===
@@ -354,8 +449,11 @@ function ChatDashboard({ setIsLoggedIn }) {
                                 if (isMyMessage) {
 
                                     return {
+
                                         ...message,
+
                                         read: true
+
                                     };
 
                                 }
@@ -384,8 +482,11 @@ function ChatDashboard({ setIsLoggedIn }) {
                             ) {
 
                                 return {
+
                                     ...conversation,
+
                                     unreadCount: 0
+
                                 };
 
                             }
@@ -431,14 +532,18 @@ function ChatDashboard({ setIsLoggedIn }) {
 
         const handleUserTyping = () => {
 
-            setIsOtherUserTyping(true);
+            setIsOtherUserTyping(
+                true
+            );
 
         };
 
 
         const handleUserStoppedTyping = () => {
 
-            setIsOtherUserTyping(false);
+            setIsOtherUserTyping(
+                false
+            );
 
         };
 
@@ -447,6 +552,7 @@ function ChatDashboard({ setIsLoggedIn }) {
             "userTyping",
             handleUserTyping
         );
+
 
         socket.on(
             "userStoppedTyping",
@@ -460,6 +566,7 @@ function ChatDashboard({ setIsLoggedIn }) {
                 "userTyping",
                 handleUserTyping
             );
+
 
             socket.off(
                 "userStoppedTyping",
@@ -489,9 +596,12 @@ function ChatDashboard({ setIsLoggedIn }) {
                     "https://real-time-chat-app-hgdr.onrender.com/api/auth/me",
                     {
                         headers: {
+
                             Authorization:
                                 `Bearer ${token}`
+
                         }
+
                     }
                 );
 
@@ -506,7 +616,9 @@ function ChatDashboard({ setIsLoggedIn }) {
                         "token"
                     );
 
-                    setIsLoggedIn(false);
+                    setIsLoggedIn(
+                        false
+                    );
 
                     return;
 
@@ -526,7 +638,9 @@ function ChatDashboard({ setIsLoggedIn }) {
 
             } catch (error) {
 
-                console.log(error);
+                console.log(
+                    error
+                );
 
             }
 
@@ -556,9 +670,12 @@ function ChatDashboard({ setIsLoggedIn }) {
                     "https://real-time-chat-app-hgdr.onrender.com/api/users",
                     {
                         headers: {
+
                             Authorization:
                                 `Bearer ${token}`
+
                         }
+
                     }
                 );
 
@@ -581,7 +698,9 @@ function ChatDashboard({ setIsLoggedIn }) {
 
             } catch (error) {
 
-                console.log(error);
+                console.log(
+                    error
+                );
 
             }
 
@@ -611,9 +730,12 @@ function ChatDashboard({ setIsLoggedIn }) {
                     "https://real-time-chat-app-hgdr.onrender.com/api/conversations",
                     {
                         headers: {
+
                             Authorization:
                                 `Bearer ${token}`
+
                         }
+
                     }
                 );
 
@@ -636,7 +758,9 @@ function ChatDashboard({ setIsLoggedIn }) {
 
             } catch (error) {
 
-                console.log(error);
+                console.log(
+                    error
+                );
 
             }
 
@@ -667,6 +791,16 @@ function ChatDashboard({ setIsLoggedIn }) {
 
             setIsOtherUserTyping(
                 false
+            );
+
+
+            setOpenMessageMenu(
+                null
+            );
+
+
+            setReplyingTo(
+                null
             );
 
 
@@ -818,9 +952,42 @@ function ChatDashboard({ setIsLoggedIn }) {
 
         } catch (error) {
 
-            console.log(error);
+            console.log(
+                error
+            );
 
         }
+
+    };
+
+
+    // =========================
+    // START REPLY
+    // =========================
+
+    const handleReply = (message) => {
+
+        setReplyingTo(
+            message
+        );
+
+
+        setOpenMessageMenu(
+            null
+        );
+
+    };
+
+
+    // =========================
+    // CANCEL REPLY
+    // =========================
+
+    const handleCancelReply = () => {
+
+        setReplyingTo(
+            null
+        );
 
     };
 
@@ -953,7 +1120,10 @@ function ChatDashboard({ setIsLoggedIn }) {
                             selectedConversation._id,
 
                         text:
-                            messageText
+                            messageText,
+
+                        replyTo:
+                            replyingTo?._id || null
 
                     })
 
@@ -1007,9 +1177,16 @@ function ChatDashboard({ setIsLoggedIn }) {
             setMessageText("");
 
 
+            setReplyingTo(
+                null
+            );
+
+
         } catch (error) {
 
-            console.log(error);
+            console.log(
+                error
+            );
 
         }
 
@@ -1079,7 +1256,10 @@ function ChatDashboard({ setIsLoggedIn }) {
             }
 
 
-            // Remove immediately
+            setOpenMessageMenu(
+                null
+            );
+
 
             setMessages(
                 (previousMessages) => {
@@ -1093,8 +1273,6 @@ function ChatDashboard({ setIsLoggedIn }) {
                 }
             );
 
-
-            // Update sidebar
 
             setConversations(
                 (previousConversations) => {
@@ -1129,7 +1307,10 @@ function ChatDashboard({ setIsLoggedIn }) {
 
         } catch (error) {
 
-            console.log(error);
+            console.log(
+                error
+            );
+
 
             alert(
                 "Cannot connect to server"
@@ -1150,6 +1331,7 @@ function ChatDashboard({ setIsLoggedIn }) {
             currentUser?.username || ""
         );
 
+
         setIsEditingProfile(
             true
         );
@@ -1158,12 +1340,15 @@ function ChatDashboard({ setIsLoggedIn }) {
 
 
     // =========================
-    // CANCEL EDIT
+    // CANCEL EDIT PROFILE
     // =========================
 
     const handleCancelEdit = () => {
 
-        setNewUsername("");
+        setNewUsername(
+            ""
+        );
+
 
         setIsEditingProfile(
             false
@@ -1281,7 +1466,10 @@ function ChatDashboard({ setIsLoggedIn }) {
             );
 
 
-            setNewUsername("");
+            setNewUsername(
+                ""
+            );
+
 
             setIsEditingProfile(
                 false
@@ -1295,7 +1483,10 @@ function ChatDashboard({ setIsLoggedIn }) {
 
         } catch (error) {
 
-            console.log(error);
+            console.log(
+                error
+            );
+
 
             alert(
                 "Cannot connect to server"
@@ -1315,6 +1506,7 @@ function ChatDashboard({ setIsLoggedIn }) {
         localStorage.removeItem(
             "token"
         );
+
 
         setIsLoggedIn(
             false
@@ -1704,6 +1896,7 @@ function ChatDashboard({ setIsLoggedIn }) {
                                 Select a chat
                             </h2>
 
+
                             <p>
                                 Choose a user to start chatting
                             </p>
@@ -1719,7 +1912,10 @@ function ChatDashboard({ setIsLoggedIn }) {
                     MESSAGES
                 ========================= */}
 
-                <div className="messages">
+                <div
+                    className="messages"
+                    ref={messagesContainerRef}
+                >
 
                     {selectedConversation ? (
 
@@ -1753,21 +1949,79 @@ function ChatDashboard({ setIsLoggedIn }) {
                                             }
                                         >
 
-                                            <div
-                                                className="message-bubble"
-                                            >
+                                            <div className="message-bubble">
 
-                                                <strong>
 
-                                                    {isMyMessage
-                                                        ? "You"
-                                                        : message
-                                                            .sender
-                                                            ?.username ||
-                                                          "User"}
+                                                {/* MESSAGE TOP */}
 
-                                                </strong>
+                                                <div className="message-top">
 
+                                                    <strong>
+
+                                                        {isMyMessage
+                                                            ? "You"
+                                                            : message
+                                                                .sender
+                                                                ?.username ||
+                                                              "User"}
+
+                                                    </strong>
+
+
+                                                    <button
+                                                        className="message-menu-button"
+                                                        onClick={(e) => {
+
+                                                            e.stopPropagation();
+
+                                                            setOpenMessageMenu(
+                                                                openMessageMenu ===
+                                                                message._id
+                                                                    ? null
+                                                                    : message._id
+                                                            );
+
+                                                        }}
+                                                    >
+                                                        ⋮
+                                                    </button>
+
+                                                </div>
+
+
+                                                {/* REPLIED MESSAGE */}
+
+                                                {message.replyTo && (
+
+                                                    <div className="replied-message">
+
+                                                        <span>
+                                                            ↩
+                                                        </span>
+
+                                                        <div>
+
+                                                            <strong>
+                                                                {
+                                                                    message.replyTo.sender?.username ||
+                                                                    "User"
+                                                                }
+                                                            </strong>
+
+                                                            <p>
+                                                                {
+                                                                    message.replyTo.text
+                                                                }
+                                                            </p>
+
+                                                        </div>
+
+                                                    </div>
+
+                                                )}
+
+
+                                                {/* MESSAGE TEXT */}
 
                                                 <p>
                                                     {
@@ -1775,6 +2029,8 @@ function ChatDashboard({ setIsLoggedIn }) {
                                                     }
                                                 </p>
 
+
+                                                {/* MESSAGE TIME */}
 
                                                 <small>
 
@@ -1794,9 +2050,7 @@ function ChatDashboard({ setIsLoggedIn }) {
                                                                     : "message-ticks"
                                                             }
                                                         >
-
                                                             ✓✓
-
                                                         </span>
 
                                                     )}
@@ -1804,20 +2058,74 @@ function ChatDashboard({ setIsLoggedIn }) {
                                                 </small>
 
 
-                                                {/* DELETE */}
+                                                {/* MESSAGE MENU */}
 
-                                                {isMyMessage && (
+                                                {openMessageMenu ===
+                                                    message._id && (
 
-                                                    <button
-                                                        className="delete-message-button"
-                                                        onClick={() =>
-                                                            handleDeleteMessage(
-                                                                message._id
-                                                            )
-                                                        }
-                                                    >
-                                                        Delete
-                                                    </button>
+                                                    <div className="message-menu">
+
+
+                                                        {/* REPLY */}
+
+                                                        <button
+                                                            onClick={() =>
+                                                                handleReply(
+                                                                    message
+                                                                )
+                                                            }
+                                                        >
+                                                            ↩ Reply
+                                                        </button>
+
+
+                                                        {/* COPY */}
+
+                                                        <button
+                                                            onClick={() => {
+
+                                                                navigator.clipboard.writeText(
+                                                                    message.text
+                                                                );
+
+                                                                setOpenMessageMenu(
+                                                                    null
+                                                                );
+
+                                                            }}
+                                                        >
+                                                            📋 Copy
+                                                        </button>
+
+
+                                                        {/* EDIT */}
+
+                                                        {isMyMessage && (
+
+                                                            <button>
+                                                                ✏ Edit
+                                                            </button>
+
+                                                        )}
+
+
+                                                        {/* DELETE */}
+
+                                                        {isMyMessage && (
+
+                                                            <button
+                                                                onClick={() =>
+                                                                    handleDeleteMessage(
+                                                                        message._id
+                                                                    )
+                                                                }
+                                                            >
+                                                                🗑 Delete
+                                                            </button>
+
+                                                        )}
+
+                                                    </div>
 
                                                 )}
 
@@ -1828,6 +2136,7 @@ function ChatDashboard({ setIsLoggedIn }) {
                                     );
 
                                 }
+
                             )
 
                         ) : (
@@ -1846,6 +2155,7 @@ function ChatDashboard({ setIsLoggedIn }) {
                                 Welcome to Chat
                             </h3>
 
+
                             <p>
                                 Select a user from the sidebar to start a conversation.
                             </p>
@@ -1862,13 +2172,18 @@ function ChatDashboard({ setIsLoggedIn }) {
 
                             <div className="typing-indicator">
 
-                                {selectedUser.username}
+                                {
+                                    selectedUser.username
+                                }
+
                                 {" is typing..."}
 
                             </div>
 
                         )}
 
+
+                    {/* SCROLL TARGET */}
 
                     <div
                         ref={
@@ -1879,13 +2194,65 @@ function ChatDashboard({ setIsLoggedIn }) {
                 </div>
 
 
-                {/* MESSAGE INPUT */}
+                {/* =========================
+                    REPLY PREVIEW
+                ========================= */}
+
+                {replyingTo && (
+
+                    <div className="reply-preview">
+
+                        <div className="reply-preview-content">
+
+                            <span>
+                                Replying to
+                            </span>
+
+                            <strong>
+
+                                {
+                                    replyingTo.sender?.username ||
+                                    "User"
+                                }
+
+                            </strong>
+
+                            <p>
+                                {
+                                    replyingTo.text
+                                }
+                            </p>
+
+                        </div>
+
+
+                        <button
+                            className="reply-cancel-button"
+                            onClick={
+                                handleCancelReply
+                            }
+                        >
+                            ✕
+                        </button>
+
+                    </div>
+
+                )}
+
+
+                {/* =========================
+                    MESSAGE INPUT
+                ========================= */}
 
                 <div className="message-input">
 
                     <input
                         type="text"
-                        placeholder="Type a message..."
+                        placeholder={
+                            replyingTo
+                                ? "Reply to message..."
+                                : "Type a message..."
+                        }
                         value={
                             messageText
                         }

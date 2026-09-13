@@ -12,7 +12,8 @@ const sendMessage = async (req, res) => {
 
         const {
             conversationId,
-            text
+            text,
+            replyTo
         } = req.body;
 
 
@@ -25,14 +26,55 @@ const sendMessage = async (req, res) => {
         if (!conversation) {
 
             return res.status(404).json({
-
-                message:
-                    "Conversation not found"
-
+                message: "Conversation not found"
             });
 
         }
 
+
+        if (!text || !text.trim()) {
+
+            return res.status(400).json({
+                message: "Message text is required"
+            });
+
+        }
+
+
+        // Check reply message
+
+        if (replyTo) {
+
+            const replyMessage =
+                await Message.findById(
+                    replyTo
+                );
+
+
+            if (!replyMessage) {
+
+                return res.status(404).json({
+                    message: "Reply message not found"
+                });
+
+            }
+
+
+            if (
+                replyMessage.conversationId.toString() !==
+                conversationId.toString()
+            ) {
+
+                return res.status(400).json({
+                    message: "Invalid reply message"
+                });
+
+            }
+
+        }
+
+
+        // Create message
 
         const message =
             await Message.create({
@@ -42,33 +84,56 @@ const sendMessage = async (req, res) => {
                 sender:
                     req.user,
 
-                text
+                text:
+                    text.trim(),
+
+                replyTo:
+                    replyTo || null
 
             });
 
 
+        // Update last message
+
         conversation.lastMessage =
             message._id;
 
-
         await conversation.save();
 
+
+        // Populate message
+
+        const populatedMessage =
+            await Message
+                .findById(message._id)
+                .populate(
+                    "sender",
+                    "-password"
+                )
+                .populate({
+                    path: "replyTo",
+                    populate: {
+                        path: "sender",
+                        select: "-password"
+                    }
+                });
+
+
+        // =========================
+        // SOCKET.IO
+        // =========================
 
         const io =
             req.app.get("io");
 
 
-        // Send to conversation room
-
         io.to(
             conversationId.toString()
         ).emit(
             "newMessage",
-            message
+            populatedMessage
         );
 
-
-        // Send to personal rooms
 
         conversation.participants.forEach(
             (participantId) => {
@@ -77,12 +142,16 @@ const sendMessage = async (req, res) => {
                     participantId.toString()
                 ).emit(
                     "newMessage",
-                    message
+                    populatedMessage
                 );
 
             }
         );
 
+
+        // =========================
+        // RESPONSE
+        // =========================
 
         res.status(201).json({
 
@@ -90,7 +159,7 @@ const sendMessage = async (req, res) => {
                 "Message sent successfully",
 
             data:
-                message
+                populatedMessage
 
         });
 
@@ -123,10 +192,8 @@ const getMessages = async (req, res) => {
         const messages =
             await Message
                 .find({
-
                     conversationId:
                         req.params.conversationId
-
                 })
 
                 .populate(
@@ -134,17 +201,21 @@ const getMessages = async (req, res) => {
                     "-password"
                 )
 
+                .populate({
+                    path: "replyTo",
+                    populate: {
+                        path: "sender",
+                        select: "-password"
+                    }
+                })
+
                 .sort({
-
                     createdAt: 1
-
                 });
 
 
         res.status(200).json({
-
             messages
-
         });
 
 
@@ -180,8 +251,7 @@ const markMessagesAsRead = async (req, res) => {
         const messages =
             await Message.find({
 
-                conversationId:
-                    conversationId,
+                conversationId,
 
                 sender: {
                     $ne: req.user
@@ -208,8 +278,7 @@ const markMessagesAsRead = async (req, res) => {
 
             {
 
-                conversationId:
-                    conversationId,
+                conversationId,
 
                 sender: {
                     $ne: req.user
@@ -242,8 +311,7 @@ const markMessagesAsRead = async (req, res) => {
 
             {
 
-                conversationId:
-                    conversationId,
+                conversationId,
 
                 userId:
                     req.user
@@ -293,8 +361,6 @@ const deleteMessage = async (req, res) => {
             req.params.id;
 
 
-        // Find message
-
         const message =
             await Message.findById(
                 messageId
@@ -312,9 +378,6 @@ const deleteMessage = async (req, res) => {
 
         }
 
-
-        // Make sure the logged-in user
-        // owns this message
 
         if (
             message.sender.toString() !==
@@ -335,14 +398,10 @@ const deleteMessage = async (req, res) => {
             message.conversationId;
 
 
-        // Delete message
-
         await Message.findByIdAndDelete(
             messageId
         );
 
-
-        // Update last message
 
         const conversation =
             await Conversation.findById(
@@ -359,8 +418,7 @@ const deleteMessage = async (req, res) => {
             const previousMessage =
                 await Message
                     .findOne({
-                        conversationId:
-                            conversationId
+                        conversationId
                     })
                     .sort({
                         createdAt: -1
@@ -378,8 +436,6 @@ const deleteMessage = async (req, res) => {
         }
 
 
-        // Socket.IO
-
         const io =
             req.app.get("io");
 
@@ -392,11 +448,9 @@ const deleteMessage = async (req, res) => {
 
             {
 
-                messageId:
-                    messageId,
+                messageId,
 
-                conversationId:
-                    conversationId
+                conversationId
 
             }
 
@@ -408,8 +462,7 @@ const deleteMessage = async (req, res) => {
             message:
                 "Message deleted successfully",
 
-            messageId:
-                messageId
+            messageId
 
         });
 
@@ -430,6 +483,7 @@ const deleteMessage = async (req, res) => {
 
 };
 
+
 // =========================
 // EDIT MESSAGE
 // =========================
@@ -441,11 +495,11 @@ const editMessage = async (req, res) => {
         const messageId =
             req.params.id;
 
-        const { text } =
-            req.body;
 
+        const {
+            text
+        } = req.body;
 
-        // Find message
 
         const message =
             await Message.findById(
@@ -465,9 +519,6 @@ const editMessage = async (req, res) => {
         }
 
 
-        // Make sure the logged-in user
-        // owns this message
-
         if (
             message.sender.toString() !==
             req.user.toString()
@@ -483,8 +534,6 @@ const editMessage = async (req, res) => {
         }
 
 
-        // Check text
-
         if (!text || !text.trim()) {
 
             return res.status(400).json({
@@ -497,16 +546,12 @@ const editMessage = async (req, res) => {
         }
 
 
-        // Update message
-
         message.text =
             text.trim();
 
 
         await message.save();
 
-
-        // Socket.IO
 
         const io =
             req.app.get("io");
@@ -550,9 +595,6 @@ const editMessage = async (req, res) => {
 
 };
 
-// =========================
-// EXPORT
-// =========================
 
 module.exports = {
 
@@ -565,4 +607,5 @@ module.exports = {
     deleteMessage,
 
     editMessage
+
 };

@@ -20,6 +20,13 @@ const messageSchema = new mongoose.Schema(
             trim: true
         },
 
+        // Message this message is replying to
+        replyTo: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Message",
+            default: null
+        },
+
         read: {
             type: Boolean,
             default: false
@@ -30,6 +37,9 @@ const messageSchema = new mongoose.Schema(
     }
 );
 
-const Message = mongoose.model("Message", messageSchema);
+const Message = mongoose.model(
+    "Message",
+    messageSchema
+);
 
 module.exports = Message;
