@@ -11,177 +11,37 @@ body,
 #root {
     width: 100%;
     height: 100%;
-    margin: 0;
 }
 
 body {
+    margin: 0;
+
     font-family:
         Inter,
         -apple-system,
         BlinkMacSystemFont,
         "Segoe UI",
+        Arial,
         sans-serif;
 
-    background: #080d19;
-
-    color: #f8fafc;
-}
-
-button,
-input {
-    font-family: inherit;
-}
-
-button {
-    cursor: pointer;
+    background: #050505;
+    color: #f5f5f5;
 }
 
 
 /* =========================================================
-   AUTH PAGES
-========================================================= */
-
-.auth-container {
-    width: 100%;
-    min-height: 100vh;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    padding: 24px;
-
-    background:
-        radial-gradient(
-            circle at top left,
-            rgba(37, 99, 235, 0.18),
-            transparent 35%
-        ),
-        radial-gradient(
-            circle at bottom right,
-            rgba(59, 130, 246, 0.12),
-            transparent 35%
-        ),
-        #080d19;
-}
-
-
-.auth-card {
-    width: 100%;
-    max-width: 420px;
-
-    padding: 40px;
-
-    border: 1px solid #243149;
-    border-radius: 20px;
-
-    background: rgba(17, 25, 40, 0.92);
-
-    box-shadow:
-        0 25px 60px rgba(0, 0, 0, 0.4),
-        inset 0 1px 0 rgba(255, 255, 255, 0.03);
-}
-
-
-.auth-card h1 {
-    margin: 0 0 8px;
-
-    font-size: 30px;
-    font-weight: 700;
-
-    letter-spacing: -0.5px;
-}
-
-
-.auth-subtitle {
-    margin: 0 0 28px;
-
-    color: #8fa1ba;
-
-    font-size: 14px;
-}
-
-
-.auth-card input {
-    width: 100%;
-
-    padding: 14px 15px;
-
-    margin-bottom: 14px;
-
-    border: 1px solid #2a3850;
-    border-radius: 10px;
-
-    outline: none;
-
-    background: #111b2d;
-
-    color: #f8fafc;
-
-    font-size: 14px;
-
-    transition:
-        border-color 0.2s ease,
-        box-shadow 0.2s ease;
-}
-
-
-.auth-card input::placeholder {
-    color: #64748b;
-}
-
-
-.auth-card input:focus {
-    border-color: #3b82f6;
-
-    box-shadow:
-        0 0 0 3px rgba(59, 130, 246, 0.12);
-}
-
-
-.auth-button {
-    width: 100%;
-
-    padding: 14px;
-
-    margin-top: 6px;
-
-    border: none;
-    border-radius: 10px;
-
-    background: #2563eb;
-
-    color: white;
-
-    font-size: 14px;
-    font-weight: 600;
-
-    transition:
-        background 0.2s ease,
-        transform 0.2s ease;
-}
-
-
-.auth-button:hover {
-    background: #1d4ed8;
-
-    transform: translateY(-1px);
-}
-
-
-/* =========================================================
-   APP / DASHBOARD
+   CHAT DASHBOARD
 ========================================================= */
 
 .chat-dashboard {
+    display: flex;
+
     width: 100%;
     height: 100vh;
 
-    display: flex;
-
     overflow: hidden;
 
-    background: #0b1220;
+    background: #050505;
 }
 
 
@@ -190,26 +50,26 @@ button {
 ========================================================= */
 
 .sidebar {
-    width: 320px;
-    min-width: 320px;
+    width: 30%;
+    min-width: 280px;
 
     height: 100vh;
 
-    display: flex;
-    flex-direction: column;
-
-    padding: 18px;
+    padding: 20px;
 
     overflow-y: auto;
-
-    border-right: 1px solid #1e2a3d;
 
     background:
         linear-gradient(
             180deg,
-            #111a2b 0%,
-            #0d1524 100%
+            #0b0b0b 0%,
+            #080808 100%
         );
+
+    border-right: 1px solid #1b1b1b;
+
+    box-shadow:
+        8px 0 30px rgba(0, 0, 0, 0.25);
 }
 
 
@@ -219,36 +79,39 @@ button {
 
 .profile-card {
     display: flex;
+
     align-items: center;
 
-    gap: 14px;
+    gap: 12px;
 
-    padding: 16px;
+    padding: 14px;
 
-    margin-bottom: 22px;
+    margin-bottom: 20px;
 
-    border: 1px solid #263550;
-    border-radius: 16px;
+    border: 1px solid #1d1d1d;
+
+    border-radius: 15px;
 
     background:
         linear-gradient(
             145deg,
-            rgba(30, 43, 66, 0.95),
-            rgba(17, 27, 44, 0.95)
+            #111111,
+            #0c0c0c
         );
 
     box-shadow:
-        0 12px 30px rgba(0, 0, 0, 0.16);
+        0 10px 30px rgba(0, 0, 0, 0.22);
 }
 
 
 .profile-avatar {
-    width: 58px;
-    height: 58px;
+    width: 48px;
+    height: 48px;
 
     flex-shrink: 0;
 
     display: flex;
+
     align-items: center;
     justify-content: center;
 
@@ -258,16 +121,16 @@ button {
         linear-gradient(
             135deg,
             #2563eb,
-            #3b82f6
+            #1d4ed8
         );
 
     color: white;
 
-    font-size: 22px;
+    font-size: 18px;
     font-weight: 700;
 
     box-shadow:
-        0 6px 18px rgba(37, 99, 235, 0.25);
+        0 5px 18px rgba(37, 99, 235, 0.25);
 }
 
 
@@ -279,64 +142,65 @@ button {
 
 
 .profile-info h3 {
-    margin: 0 0 4px;
+    margin: 0 0 3px;
 
     overflow: hidden;
 
     white-space: nowrap;
+
     text-overflow: ellipsis;
 
-    color: #f8fafc;
+    color: #f5f5f5;
 
-    font-size: 16px;
+    font-size: 14px;
     font-weight: 650;
 }
 
 
 .profile-info p {
-    margin: 0 0 7px;
+    margin: 0 0 5px;
 
     overflow: hidden;
 
     white-space: nowrap;
+
     text-overflow: ellipsis;
 
-    color: #71839e;
+    color: #777777;
 
-    font-size: 12px;
+    font-size: 10px;
 }
 
 
 .profile-online {
     display: flex;
+
     align-items: center;
 
     gap: 5px;
 
     color: #22c55e;
 
-    font-size: 11px;
-}
-
-
-.status-dot {
-    font-size: 8px;
+    font-size: 10px;
 }
 
 
 .edit-profile-button {
-    margin-top: 9px;
+    margin-top: 7px;
 
-    padding: 7px 10px;
+    padding: 4px 8px;
 
-    border: 1px solid #33445f;
-    border-radius: 8px;
+    border: 1px solid #292929;
 
-    background: #182438;
+    border-radius: 6px;
 
-    color: #b9c6d9;
+    background: #151515;
 
-    font-size: 11px;
+    color: #999999;
+
+    font-size: 10px;
+
+    cursor: pointer;
 
     transition:
         background 0.2s ease,
@@ -346,94 +210,11 @@ button {
 
 
 .edit-profile-button:hover {
-    border-color: #41618d;
+    background: #1d1d1d;
 
-    background: #21314a;
+    border-color: #333333;
 
     color: #ffffff;
-}
-
-
-/* =========================================================
-   PROFILE EDIT
-========================================================= */
-
-.profile-edit {
-    width: 100%;
-}
-
-
-.profile-edit input {
-    width: 100%;
-
-    padding: 9px 10px;
-
-    border: 1px solid #33445f;
-    border-radius: 8px;
-
-    outline: none;
-
-    background: #101a2b;
-
-    color: white;
-
-    font-size: 12px;
-}
-
-
-.profile-edit input:focus {
-    border-color: #3b82f6;
-}
-
-
-.profile-edit-buttons {
-    display: flex;
-
-    gap: 7px;
-
-    margin-top: 8px;
-}
-
-
-.save-profile-button,
-.cancel-profile-button {
-    flex: 1;
-
-    padding: 7px;
-
-    border-radius: 7px;
-
-    font-size: 11px;
-}
-
-
-.save-profile-button {
-    border: none;
-
-    background: #2563eb;
-
-    color: white;
-}
-
-
-.save-profile-button:hover {
-    background: #1d4ed8;
-}
-
-
-.cancel-profile-button {
-    border: 1px solid #33445f;
-
-    background: transparent;
-
-    color: #9aa9bd;
-}
-
-
-.cancel-profile-button:hover {
-    background: #1b283d;
-
-    color: white;
 }
 
 
@@ -442,23 +223,20 @@ button {
 ========================================================= */
 
 .sidebar-title {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-
-    margin-bottom: 12px;
+    margin-bottom: 15px;
 }
 
 
-.sidebar-title h2 {
+.sidebar-title h2,
+.sidebar h2 {
     margin: 0;
 
-    color: #f8fafc;
+    color: #f5f5f5;
 
-    font-size: 21px;
+    font-size: 23px;
     font-weight: 700;
 
-    letter-spacing: -0.3px;
+    letter-spacing: -0.5px;
 }
 
 
@@ -467,7 +245,7 @@ button {
 ========================================================= */
 
 .search-box {
-    margin-bottom: 10px;
+    margin-bottom: 12px;
 }
 
 
@@ -476,14 +254,15 @@ button {
 
     padding: 12px 14px;
 
-    border: 1px solid #2b3a53;
+    border: 1px solid #202020;
+
     border-radius: 11px;
 
     outline: none;
 
-    background: #172337;
+    background: #101010;
 
-    color: #f8fafc;
+    color: #f5f5f5;
 
     font-size: 13px;
 
@@ -495,17 +274,17 @@ button {
 
 
 .search-box input::placeholder {
-    color: #6d809b;
+    color: #5f5f5f;
 }
 
 
 .search-box input:focus {
-    border-color: #3b82f6;
+    border-color: #2d5fc8;
 
-    background: #19273c;
+    background: #121212;
 
     box-shadow:
-        0 0 0 3px rgba(59, 130, 246, 0.08);
+        0 0 0 3px rgba(37, 99, 235, 0.08);
 }
 
 
@@ -516,48 +295,58 @@ button {
 .sidebar > button {
     width: 100%;
 
-    padding: 11px;
+    margin-bottom: 18px;
 
-    margin-bottom: 14px;
+    padding: 10px 14px;
 
-    border: none;
-    border-radius: 10px;
+    border: 1px solid #222222;
 
-    background: #1b283b;
+    border-radius: 9px;
 
-    color: #dce5f1;
+    background: #101010;
 
-    font-size: 13px;
-    font-weight: 500;
+    color: #aaaaaa;
+
+    font-size: 12px;
+    font-weight: 600;
+
+    cursor: pointer;
 
     transition:
         background 0.2s ease,
-        color 0.2s ease;
+        color 0.2s ease,
+        border-color 0.2s ease;
 }
 
 
 .sidebar > button:hover {
-    background: #25344b;
+    background: #181818;
 
-    color: white;
+    border-color: #333333;
+
+    color: #ffffff;
 }
 
 
 /* =========================================================
-   CHAT USER
+   CHAT USERS
 ========================================================= */
 
 .chat-user {
     display: flex;
+
     align-items: center;
 
     gap: 12px;
 
+    position: relative;
+
     padding: 12px;
 
-    margin-bottom: 6px;
+    margin-bottom: 5px;
 
     border: 1px solid transparent;
+
     border-radius: 13px;
 
     cursor: pointer;
@@ -565,38 +354,44 @@ button {
     transition:
         background 0.2s ease,
         border-color 0.2s ease,
-        transform 0.15s ease;
+        transform 0.2s ease;
 }
 
 
 .chat-user:hover {
-    border-color: #263b5a;
+    background: #111111;
 
-    background: #17263d;
+    border-color: #1d1d1d;
 
     transform: translateX(2px);
 }
 
 
 .chat-user.active {
-    border-color: #31598d;
-
     background:
         linear-gradient(
             135deg,
-            #1d3b64,
-            #1a3458
+            rgba(37, 99, 235, 0.16),
+            rgba(37, 99, 235, 0.07)
         );
+
+    border-color:
+        rgba(59, 130, 246, 0.22);
 }
 
 
+/* =========================================================
+   USER AVATAR
+========================================================= */
+
 .user-avatar {
-    width: 44px;
-    height: 44px;
+    width: 45px;
+    height: 45px;
 
     flex-shrink: 0;
 
     display: flex;
+
     align-items: center;
     justify-content: center;
 
@@ -605,27 +400,52 @@ button {
     background:
         linear-gradient(
             135deg,
-            #2563eb,
-            #3b82f6
+            #202020,
+            #151515
         );
 
-    color: white;
+    border: 1px solid #2b2b2b;
 
-    font-size: 16px;
-    font-weight: 600;
+    color: #eeeeee;
+
+    font-size: 17px;
+    font-weight: 700;
 }
 
 
-.user-info {
-    min-width: 0;
+/* Active avatar */
 
+.chat-user.active .user-avatar {
+    background:
+        linear-gradient(
+            135deg,
+            #2563eb,
+            #1d4ed8
+        );
+
+    border-color: transparent;
+
+    box-shadow:
+        0 4px 15px rgba(37, 99, 235, 0.2);
+}
+
+
+/* =========================================================
+   USER INFORMATION
+========================================================= */
+
+.user-info {
     flex: 1;
+
+    min-width: 0;
 }
 
 
 .user-name-row {
     display: flex;
+
     align-items: center;
+
     justify-content: space-between;
 
     gap: 8px;
@@ -638,9 +458,10 @@ button {
     overflow: hidden;
 
     white-space: nowrap;
+
     text-overflow: ellipsis;
 
-    color: #f1f5f9;
+    color: #eeeeee;
 
     font-size: 14px;
     font-weight: 600;
@@ -648,14 +469,15 @@ button {
 
 
 .user-info > p {
-    margin: 3px 0 4px;
+    margin: 4px 0;
 
     overflow: hidden;
 
     white-space: nowrap;
+
     text-overflow: ellipsis;
 
-    color: #7e90aa;
+    color: #6f6f6f;
 
     font-size: 11px;
 }
@@ -664,9 +486,10 @@ button {
 .online-status,
 .offline-status {
     display: flex;
+
     align-items: center;
 
-    gap: 5px;
+    gap: 4px;
 
     font-size: 10px;
 }
@@ -678,7 +501,12 @@ button {
 
 
 .offline-status {
-    color: #64748b;
+    color: #555555;
+}
+
+
+.status-dot {
+    font-size: 8px;
 }
 
 
@@ -687,12 +515,13 @@ button {
     height: 20px;
 
     display: flex;
+
     align-items: center;
     justify-content: center;
 
     padding: 0 6px;
 
-    border-radius: 10px;
+    border-radius: 50%;
 
     background: #2563eb;
 
@@ -700,6 +529,9 @@ button {
 
     font-size: 10px;
     font-weight: 700;
+
+    box-shadow:
+        0 4px 12px rgba(37, 99, 235, 0.2);
 }
 
 
@@ -708,9 +540,9 @@ button {
 
     text-align: center;
 
-    color: #64748b;
+    color: #555555;
 
-    font-size: 13px;
+    font-size: 12px;
 }
 
 
@@ -726,9 +558,10 @@ button {
     height: 100vh;
 
     display: flex;
+
     flex-direction: column;
 
-    background: #0b1425;
+    background: #050505;
 }
 
 
@@ -741,30 +574,37 @@ button {
     min-height: 74px;
 
     display: flex;
+
     align-items: center;
 
     gap: 13px;
 
     padding: 0 24px;
 
-    border-bottom: 1px solid #1e2a3d;
+    border-bottom: 1px solid #1b1b1b;
 
     background:
-        rgba(14, 23, 39, 0.92);
+        rgba(10, 10, 10, 0.92);
 
-    backdrop-filter: blur(12px);
+    backdrop-filter: blur(16px);
+
+    box-shadow:
+        0 5px 25px rgba(0, 0, 0, 0.18);
+
+    z-index: 5;
 }
 
 
 .header-avatar {
-    width: 48px;
-    height: 48px;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    width: 46px;
+    height: 46px;
 
     flex-shrink: 0;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
 
     border-radius: 50%;
 
@@ -772,36 +612,48 @@ button {
         linear-gradient(
             135deg,
             #2563eb,
-            #3b82f6
+            #1d4ed8
         );
 
     color: white;
 
-    font-size: 18px;
+    font-size: 17px;
     font-weight: 700;
+
+    box-shadow:
+        0 5px 18px rgba(37, 99, 235, 0.22);
+}
+
+
+.header-user-info {
+    display: flex;
+
+    flex-direction: column;
+
+    justify-content: center;
 }
 
 
 .header-user-info h2 {
     margin: 0 0 4px;
 
-    color: #f8fafc;
+    color: #f5f5f5;
 
-    font-size: 18px;
+    font-size: 17px;
     font-weight: 650;
 }
 
 
 .header-user-info .online-status,
 .header-user-info .offline-status {
-    font-size: 11px;
+    font-size: 10px;
 }
 
 
 .empty-header h2 {
     margin: 0 0 3px;
 
-    color: #dbe5f2;
+    color: #dddddd;
 
     font-size: 17px;
 }
@@ -810,7 +662,7 @@ button {
 .empty-header p {
     margin: 0;
 
-    color: #64748b;
+    color: #555555;
 
     font-size: 11px;
 }
@@ -833,12 +685,20 @@ button {
 
     scroll-behavior: smooth;
 
-    background:
-        radial-gradient(
-            circle at 70% 10%,
-            rgba(37, 99, 235, 0.035),
-            transparent 30%
-        );
+    background-image:
+        linear-gradient(
+            rgba(0, 0, 0, 0.67),
+            rgba(0, 0, 0, 0.67)
+        ),
+        url("/chat-wallpaper.png");
+
+    background-size: cover;
+
+    background-position: center;
+
+    background-repeat: no-repeat;
+
+    background-attachment: fixed;
 }
 
 
@@ -872,104 +732,58 @@ button {
 .message-bubble {
     position: relative;
 
-    max-width: min(520px, 70%);
+    max-width: 65%;
+    min-width: 80px;
 
-    padding: 12px 14px 10px;
+    padding: 10px 13px;
 
-    border-radius: 14px;
+    border: 1px solid #202020;
+
+    border-radius: 15px;
+
+    background:
+        rgba(22, 22, 22, 0.94);
+
+    color: #eeeeee;
+
+    word-wrap: break-word;
 
     box-shadow:
-        0 5px 15px rgba(0, 0, 0, 0.12);
+        0 6px 20px rgba(0, 0, 0, 0.32);
+
+    backdrop-filter: blur(8px);
 }
 
+
+/* My messages */
 
 .my-message .message-bubble {
+    background:
+        linear-gradient(
+            135deg,
+            #173c87,
+            #12316f
+        );
+
+    border-color:
+        rgba(74, 126, 230, 0.35);
+
+    color: #ffffff;
+
     border-bottom-right-radius: 5px;
 
-    background:
-        linear-gradient(
-            135deg,
-            #2563eb,
-            #2865e6
-        );
-
-    color: white;
+    box-shadow:
+        0 7px 22px rgba(0, 0, 0, 0.35);
 }
 
+
+/* Other messages */
 
 .other-message .message-bubble {
-    border-bottom-left-radius: 5px;
-
     background:
-        linear-gradient(
-            135deg,
-            #1d2a3f,
-            #1b293e
-        );
+        rgba(19, 19, 19, 0.94);
 
-    color: #f1f5f9;
-}
-
-
-/* =========================================================
-   MESSAGE TOP
-========================================================= */
-
-.message-top {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-
-    gap: 16px;
-
-    margin-bottom: 5px;
-}
-
-
-.message-top strong {
-    color: #f8fafc;
-
-    font-size: 12px;
-    font-weight: 650;
-}
-
-
-/* =========================================================
-   MESSAGE MENU BUTTON
-========================================================= */
-
-.message-menu-button {
-    width: 24px;
-    height: 24px;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    padding: 0;
-
-    border: none;
-    border-radius: 50%;
-
-    background: transparent;
-
-    color: rgba(255, 255, 255, 0.55);
-
-    font-size: 18px;
-    line-height: 1;
-
-    cursor: pointer;
-
-    transition:
-        background 0.15s ease,
-        color 0.15s ease;
-}
-
-
-.message-menu-button:hover {
-    background: rgba(255, 255, 255, 0.12);
-
-    color: white;
+    border-bottom-left-radius: 5px;
 }
 
 
@@ -977,38 +791,55 @@ button {
    MESSAGE TEXT
 ========================================================= */
 
-.message-bubble > p {
+.message-bubble p {
     margin: 0;
 
-    line-height: 1.45;
-
-    word-break: break-word;
+    color: inherit;
 
     font-size: 14px;
+
+    line-height: 1.5;
 }
 
 
 /* =========================================================
-   MESSAGE TIME
+   MESSAGE BOTTOM
 ========================================================= */
 
-.message-bubble small {
+.message-bottom {
     display: flex;
+
     align-items: center;
+
     justify-content: flex-end;
 
     gap: 5px;
 
-    margin-top: 7px;
+    margin-top: 5px;
+}
 
-    color: rgba(255, 255, 255, 0.55);
+
+.message-bottom small {
+    display: flex;
+
+    align-items: center;
+
+    gap: 5px;
+
+    margin: 0;
+
+    color: rgba(255, 255, 255, 0.45);
 
     font-size: 9px;
 }
 
 
+/* =========================================================
+   MESSAGE TICKS
+========================================================= */
+
 .message-ticks {
-    letter-spacing: -2px;
+    margin-left: 2px;
 
     color: rgba(255, 255, 255, 0.55);
 
@@ -1017,7 +848,61 @@ button {
 
 
 .message-ticks.read {
-    color: #bfdbfe;
+    color: #60a5fa;
+}
+
+
+/* =========================================================
+   MESSAGE MENU BUTTON
+========================================================= */
+
+.message-menu-button {
+    width: 22px;
+    height: 22px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    padding: 0;
+
+    border: none;
+
+    border-radius: 50%;
+
+    background: transparent;
+
+    color: rgba(255, 255, 255, 0.55);
+
+    font-size: 17px;
+
+    line-height: 1;
+
+    cursor: pointer;
+
+    opacity: 0;
+
+    pointer-events: none;
+
+    transition:
+        opacity 0.2s ease,
+        background 0.15s ease,
+        color 0.15s ease;
+}
+
+
+.message-bubble:hover .message-menu-button {
+    opacity: 1;
+
+    pointer-events: auto;
+}
+
+
+.message-menu-button:hover {
+    background: rgba(255, 255, 255, 0.1);
+
+    color: white;
 }
 
 
@@ -1028,23 +913,25 @@ button {
 .message-menu {
     position: absolute;
 
-    top: 40px;
     right: 8px;
 
-    z-index: 50;
+    bottom: 32px;
 
-    min-width: 145px;
+    min-width: 125px;
 
     padding: 5px;
 
-    border: 1px solid #30415d;
+    border: 1px solid #292929;
+
     border-radius: 10px;
 
     background:
-        rgba(15, 24, 40, 0.98);
+        rgba(14, 14, 14, 0.98);
 
     box-shadow:
-        0 14px 35px rgba(0, 0, 0, 0.45);
+        0 12px 35px rgba(0, 0, 0, 0.55);
+
+    z-index: 20;
 
     backdrop-filter: blur(12px);
 }
@@ -1053,21 +940,21 @@ button {
 .message-menu button {
     width: 100%;
 
-    display: flex;
-    align-items: center;
-
-    padding: 9px 10px;
+    padding: 8px 10px;
 
     border: none;
+
     border-radius: 7px;
 
     background: transparent;
 
-    color: #d8e1ed;
+    color: #bdbdbd;
 
     text-align: left;
 
-    font-size: 12px;
+    font-size: 11px;
+
+    cursor: pointer;
 
     transition:
         background 0.15s ease,
@@ -1076,45 +963,37 @@ button {
 
 
 .message-menu button:hover {
-    background: #1e2d44;
+    background: #1d1d1d;
 
-    color: white;
+    color: #ffffff;
 }
 
 
 /* =========================================================
-   REPLIED MESSAGE INSIDE BUBBLE
+   REPLIED MESSAGE
 ========================================================= */
 
 .replied-message {
     display: flex;
-    align-items: flex-start;
 
-    gap: 7px;
+    gap: 8px;
 
-    margin-bottom: 9px;
+    margin-bottom: 8px;
 
     padding: 7px 9px;
 
-    border-left: 3px solid #93c5fd;
+    border-left: 3px solid #3b82f6;
 
     border-radius: 6px;
 
-    background: rgba(0, 0, 0, 0.17);
+    background: rgba(0, 0, 0, 0.22);
 }
 
 
 .replied-message > span {
-    flex-shrink: 0;
+    color: #60a5fa;
 
-    color: #bfdbfe;
-
-    font-size: 12px;
-}
-
-
-.replied-message div {
-    min-width: 0;
+    font-size: 13px;
 }
 
 
@@ -1123,7 +1002,7 @@ button {
 
     margin-bottom: 2px;
 
-    color: #bfdbfe;
+    color: #bdbdbd;
 
     font-size: 10px;
 }
@@ -1132,118 +1011,81 @@ button {
 .replied-message p {
     margin: 0;
 
-    max-width: 270px;
+    color: #777777;
 
-    overflow: hidden;
+    font-size: 10px;
 
-    white-space: nowrap;
-
-    text-overflow: ellipsis;
-
-    color: #d4deeb;
-
-    font-size: 11px;
+    line-height: 1.3;
 }
 
 
 /* =========================================================
-   REPLY PREVIEW ABOVE INPUT
+   MEDIA
 ========================================================= */
 
-.reply-preview {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-
-    gap: 12px;
-
-    padding: 10px 20px;
-
-    border-top: 1px solid #1e2a3d;
-
-    background: #111c2e;
-}
-
-
-.reply-preview-content {
-    min-width: 0;
-
-    flex: 1;
-
-    padding-left: 11px;
-
-    border-left: 3px solid #60a5fa;
-}
-
-
-.reply-preview-content span {
+.chat-image {
     display: block;
 
-    margin-bottom: 2px;
+    max-width: 300px;
+    max-height: 300px;
 
-    color: #60a5fa;
+    margin-top: 5px;
 
-    font-size: 10px;
+    border-radius: 10px;
+
+    object-fit: cover;
+
+    border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 
-.reply-preview-content strong {
+.chat-video {
     display: block;
 
-    margin-bottom: 2px;
+    width: 300px;
+    max-width: 100%;
 
-    color: #e2e8f0;
+    margin-top: 5px;
 
-    font-size: 11px;
+    border-radius: 10px;
+
+    background: #000;
+
+    border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 
-.reply-preview-content p {
-    margin: 0;
+.chat-file {
+    display: inline-block;
 
-    overflow: hidden;
+    margin-top: 5px;
 
-    white-space: nowrap;
+    padding: 8px 10px;
 
-    text-overflow: ellipsis;
+    border: 1px solid #303030;
 
-    color: #7f91aa;
+    border-radius: 8px;
 
-    font-size: 11px;
-}
+    background: #101010;
 
+    color: #9bbcff;
 
-.reply-cancel-button {
-    width: 30px;
-    height: 30px;
+    text-decoration: none;
 
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    font-size: 12px;
 
-    flex-shrink: 0;
-
-    padding: 0;
-
-    border: none;
-    border-radius: 50%;
-
-    background: transparent;
-
-    color: #8191a8;
-
-    font-size: 14px;
+    font-weight: 500;
 
     transition:
-        background 0.15s ease,
-        color 0.15s ease;
+        background 0.2s ease,
+        border-color 0.2s ease;
 }
 
 
-.reply-cancel-button:hover {
-    background: #26364d;
+.chat-file:hover {
+    background: #181818;
 
-    color: white;
+    border-color: #3b82f6;
 }
 
 
@@ -1254,19 +1096,25 @@ button {
 .typing-indicator {
     width: fit-content;
 
-    margin: 5px 0 8px;
+    margin-bottom: 10px;
 
-    padding: 7px 11px;
+    padding: 8px 12px;
 
-    border-radius: 10px;
+    border: 1px solid #242424;
 
-    background: #18263a;
+    border-radius: 12px;
 
-    color: #7e91ac;
+    background:
+        rgba(18, 18, 18, 0.92);
+
+    color: #777777;
 
     font-size: 11px;
 
     font-style: italic;
+
+    box-shadow:
+        0 5px 15px rgba(0, 0, 0, 0.25);
 }
 
 
@@ -1279,7 +1127,9 @@ button {
     height: 100%;
 
     display: flex;
+
     flex-direction: column;
+
     align-items: center;
     justify-content: center;
 
@@ -1290,20 +1140,22 @@ button {
 .empty-chat h3 {
     margin: 0 0 8px;
 
-    color: #cbd5e1;
+    color: #dddddd;
 
     font-size: 22px;
+
+    letter-spacing: -0.4px;
 }
 
 
 .empty-chat p {
+    max-width: 380px;
+
     margin: 0;
 
-    max-width: 360px;
+    color: #5f5f5f;
 
-    color: #64748b;
-
-    font-size: 13px;
+    font-size: 12px;
 
     line-height: 1.5;
 }
@@ -1315,101 +1167,150 @@ button {
 
 .message-input {
     display: flex;
+
     align-items: center;
 
-    gap: 12px;
+    gap: 9px;
 
-    padding: 14px 20px;
+    padding: 13px 18px;
 
-    border-top: 1px solid #1e2a3d;
+    border-top: 1px solid #1b1b1b;
 
     background:
-        rgba(13, 21, 36, 0.96);
+        rgba(8, 8, 8, 0.96);
+
+    backdrop-filter: blur(15px);
 }
 
 
-.message-input input {
-    min-width: 0;
+/* Input */
 
+.message-input input {
     flex: 1;
 
-    padding: 14px 16px;
+    padding: 13px 15px;
 
-    border: 1px solid #2b3b55;
-    border-radius: 12px;
+    border: 1px solid #242424;
+
+    border-radius: 11px;
 
     outline: none;
 
-    background: #18253a;
+    background: #111111;
 
-    color: #f8fafc;
+    color: #f5f5f5;
 
-    font-size: 14px;
+    font-size: 13px;
 
     transition:
         border-color 0.2s ease,
-        box-shadow 0.2s ease,
-        background 0.2s ease;
+        background 0.2s ease,
+        box-shadow 0.2s ease;
 }
 
 
 .message-input input::placeholder {
-    color: #71839d;
+    color: #5d5d5d;
 }
 
 
 .message-input input:focus {
-    border-color: #3b82f6;
+    border-color: #315fbe;
 
-    background: #1b2940;
+    background: #141414;
 
     box-shadow:
-        0 0 0 3px rgba(59, 130, 246, 0.08);
+        0 0 0 3px rgba(37, 99, 235, 0.08);
 }
 
 
-.message-input button {
-    min-width: 92px;
+/* =========================================================
+   ATTACHMENT BUTTON
+========================================================= */
 
-    padding: 14px 20px;
+.attachment-button {
+    width: 42px;
+    height: 42px;
+
+    flex-shrink: 0;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border: 1px solid #252525;
+
+    border-radius: 10px;
+
+    background: #111111;
+
+    color: #999999;
+
+    font-size: 17px;
+
+    cursor: pointer;
+
+    transition:
+        background 0.2s ease,
+        border-color 0.2s ease,
+        color 0.2s ease;
+}
+
+
+.attachment-button:hover {
+    background: #191919;
+
+    border-color: #333333;
+
+    color: #ffffff;
+}
+
+
+/* =========================================================
+   SEND BUTTON
+========================================================= */
+
+.message-input button {
+    min-width: 82px;
+
+    padding: 13px 18px;
 
     border: none;
-    border-radius: 12px;
+
+    border-radius: 10px;
 
     background:
         linear-gradient(
             135deg,
             #2563eb,
-            #3475ef
+            #1d4ed8
         );
 
     color: white;
 
-    font-size: 14px;
+    font-size: 13px;
     font-weight: 650;
 
     box-shadow:
-        0 7px 18px rgba(37, 99, 235, 0.2);
+        0 6px 18px rgba(37, 99, 235, 0.18);
+
+    cursor: pointer;
 
     transition:
         transform 0.15s ease,
         box-shadow 0.15s ease,
-        background 0.15s ease;
+        filter 0.15s ease;
 }
 
 
 .message-input button:hover {
-    background:
-        linear-gradient(
-            135deg,
-            #1d4ed8,
-            #2563eb
-        );
+    filter: brightness(1.08);
 
     transform: translateY(-1px);
 
     box-shadow:
-        0 9px 22px rgba(37, 99, 235, 0.28);
+        0 8px 22px rgba(37, 99, 235, 0.28);
 }
 
 
@@ -1438,163 +1339,664 @@ button {
 .messages::-webkit-scrollbar-thumb {
     border-radius: 10px;
 
-    background: #26364d;
+    background: #242424;
 }
 
 
 .sidebar::-webkit-scrollbar-thumb:hover,
 .messages::-webkit-scrollbar-thumb:hover {
-    background: #344965;
+    background: #363636;
 }
 
 
 /* =========================================================
-   RESPONSIVE
+   AUTH PAGES
 ========================================================= */
 
-@media (max-width: 900px) {
+.auth-container {
+    width: 100%;
+    min-height: 100vh;
 
-    .sidebar {
-        width: 280px;
-        min-width: 280px;
-    }
+    display: flex;
 
-    .messages {
-        padding: 22px;
-    }
+    align-items: center;
+    justify-content: center;
 
-    .message-bubble {
-        max-width: 75%;
-    }
-
+    background:
+        radial-gradient(
+            circle at top,
+            #141414,
+            #050505 65%
+        );
 }
 
+
+.auth-card {
+    width: 400px;
+    max-width: 90%;
+
+    padding: 35px;
+
+    border: 1px solid #242424;
+
+    border-radius: 18px;
+
+    background:
+        linear-gradient(
+            145deg,
+            #111111,
+            #090909
+        );
+
+    box-shadow:
+        0 25px 70px rgba(0, 0, 0, 0.55);
+}
+
+
+.auth-card h1 {
+    margin: 0 0 8px;
+
+    color: #f5f5f5;
+
+    text-align: center;
+
+    font-size: 28px;
+}
+
+
+.auth-card .auth-subtitle {
+    margin: 0 0 25px;
+
+    color: #666666;
+
+    text-align: center;
+
+    font-size: 14px;
+}
+
+
+.auth-card input {
+    width: 100%;
+
+    margin-bottom: 14px;
+
+    padding: 13px 15px;
+
+    border: 1px solid #292929;
+
+    border-radius: 10px;
+
+    outline: none;
+
+    background: #151515;
+
+    color: #f5f5f5;
+
+    font-size: 14px;
+}
+
+
+.auth-card input::placeholder {
+    color: #5d5d5d;
+}
+
+
+.auth-card input:focus {
+    border-color: #315fbe;
+
+    box-shadow:
+        0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+
+.auth-card .auth-button {
+    width: 100%;
+
+    padding: 13px;
+
+    margin-top: 5px;
+
+    border: none;
+
+    border-radius: 10px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #2563eb,
+            #1d4ed8
+        );
+
+    color: white;
+
+    font-size: 15px;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition:
+        transform 0.2s ease,
+        filter 0.2s ease;
+}
+
+
+.auth-card .auth-button:hover {
+    filter: brightness(1.08);
+
+    transform: translateY(-1px);
+}
+
+
+.auth-switch {
+    margin-top: 20px;
+
+    text-align: center;
+
+    color: #666666;
+
+    font-size: 13px;
+}
+
+
+.auth-switch button {
+    border: none;
+
+    background: none;
+
+    color: #60a5fa;
+
+    font-size: 13px;
+
+    cursor: pointer;
+}
+
+
+.auth-switch button:hover {
+    text-decoration: underline;
+}
+
+
+/* =========================================================
+   MOBILE RESPONSIVE
+========================================================= */
 
 @media (max-width: 700px) {
 
+    html,
+    body,
+    #root {
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+    }
+
+    .chat-dashboard {
+        width: 100%;
+        height: 100dvh;
+
+        overflow: hidden;
+    }
+
+    /* -------------------------
+       SIDEBAR
+    ------------------------- */
+
     .sidebar {
-        width: 245px;
-        min-width: 245px;
+        width: 34%;
+        min-width: 34%;
+        max-width: 34%;
 
-        padding: 12px;
-    }
+        height: 100dvh;
 
-    .profile-card {
-        padding: 12px;
-    }
-
-    .profile-avatar {
-        width: 46px;
-        height: 46px;
-    }
-
-    .chat-header {
-        padding: 0 16px;
-    }
-
-    .messages {
-        padding: 18px 14px;
-    }
-
-    .message-bubble {
-        max-width: 82%;
-    }
-
-    .message-input {
         padding: 10px;
-    }
 
-    .message-input button {
-        min-width: 70px;
-
-        padding: 13px 14px;
-    }
-
-}
-
-
-@media (max-width: 560px) {
-
-    .sidebar {
-        width: 210px;
-        min-width: 210px;
+        overflow-x: hidden;
+        overflow-y: auto;
     }
 
     .profile-card {
-        gap: 8px;
+        padding: 9px;
+
+        gap: 7px;
+
+        margin-bottom: 12px;
     }
 
     .profile-avatar {
-        width: 40px;
-        height: 40px;
+        width: 36px;
+        height: 36px;
 
-        font-size: 16px;
+        font-size: 14px;
     }
 
     .profile-info h3 {
-        font-size: 13px;
+        font-size: 11px;
     }
 
     .profile-info p {
-        font-size: 10px;
+        font-size: 8px;
+    }
+
+    .profile-online {
+        font-size: 8px;
     }
 
     .edit-profile-button {
-        font-size: 10px;
+        padding: 3px 6px;
+
+        font-size: 8px;
     }
 
     .sidebar-title h2 {
-        font-size: 18px;
+        font-size: 16px;
     }
 
-    .user-avatar {
-        width: 38px;
-        height: 38px;
-    }
+    .search-box input {
+        padding: 9px;
 
-    .user-name-row h3 {
-        font-size: 12px;
-    }
-
-    .user-info > p {
         font-size: 10px;
     }
 
+    .sidebar > button {
+        padding: 8px;
+
+        margin-bottom: 10px;
+
+        font-size: 9px;
+    }
+
+
+    /* -------------------------
+       USERS
+    ------------------------- */
+
+    .chat-user {
+        gap: 7px;
+
+        padding: 8px 5px;
+
+        margin-bottom: 3px;
+    }
+
+    .user-avatar {
+        width: 32px;
+        height: 32px;
+
+        font-size: 12px;
+    }
+
+    .user-name-row h3 {
+        font-size: 10px;
+    }
+
+    .user-info > p {
+        font-size: 8px;
+    }
+
+    .online-status,
+    .offline-status {
+        font-size: 7px;
+    }
+
+    .status-dot {
+        font-size: 6px;
+    }
+
+    .unread-count {
+        min-width: 16px;
+        height: 16px;
+
+        padding: 0 4px;
+
+        font-size: 8px;
+    }
+
+
+    /* -------------------------
+       CHAT WINDOW
+    ------------------------- */
+
+    .chat-window {
+        width: 66%;
+        min-width: 0;
+
+        height: 100dvh;
+    }
+
+
+    /* -------------------------
+       CHAT HEADER
+    ------------------------- */
+
+    .chat-header {
+        height: 62px;
+        min-height: 62px;
+
+        padding: 0 12px;
+
+        gap: 8px;
+    }
+
     .header-avatar {
-        width: 40px;
-        height: 40px;
+        width: 36px;
+        height: 36px;
+
+        font-size: 13px;
     }
 
     .header-user-info h2 {
-        font-size: 15px;
+        margin-bottom: 2px;
+
+        font-size: 13px;
+    }
+
+    .header-user-info .online-status,
+    .header-user-info .offline-status {
+        font-size: 8px;
+    }
+
+    .empty-header h2 {
+        font-size: 13px;
+    }
+
+    .empty-header p {
+        font-size: 8px;
+    }
+
+
+    /* -------------------------
+       MESSAGES
+    ------------------------- */
+
+    .messages {
+        width: 100%;
+
+        padding: 15px 10px;
+
+        overflow-x: hidden;
+
+        background-attachment: scroll;
+    }
+
+    .message-row {
+        width: 100%;
+
+        margin-bottom: 8px;
     }
 
     .message-bubble {
-        max-width: 88%;
+        max-width: 85%;
+
+        min-width: 0;
+
+        padding: 8px 10px;
+
+        border-radius: 13px;
     }
 
+    .message-bubble p {
+        font-size: 12px;
+
+        line-height: 1.45;
+    }
+
+    .message-bottom small {
+        font-size: 8px;
+    }
+
+    .message-ticks {
+        font-size: 9px;
+    }
+
+    .message-menu-button {
+        width: 20px;
+        height: 20px;
+
+        font-size: 15px;
+    }
+
+
+    /* -------------------------
+       REPLY
+    ------------------------- */
+
+    .replied-message {
+        gap: 6px;
+
+        margin-bottom: 6px;
+
+        padding: 6px 7px;
+    }
+
+    .replied-message > span {
+        font-size: 11px;
+    }
+
+    .replied-message strong {
+        font-size: 8px;
+    }
+
+    .replied-message p {
+        font-size: 8px;
+    }
+
+
+    /* -------------------------
+       MEDIA
+    ------------------------- */
+
+    .chat-image {
+        max-width: 200px;
+        max-height: 220px;
+    }
+
+    .chat-video {
+        width: 200px;
+        max-width: 100%;
+    }
+
+    .chat-file {
+        max-width: 100%;
+
+        padding: 7px 8px;
+
+        font-size: 9px;
+    }
+
+
+    /* -------------------------
+       TYPING
+    ------------------------- */
+
+    .typing-indicator {
+        margin-bottom: 7px;
+
+        padding: 6px 9px;
+
+        font-size: 9px;
+    }
+
+
+    /* -------------------------
+       MESSAGE INPUT
+    ------------------------- */
+
+    .message-input {
+        width: 100%;
+
+        gap: 6px;
+
+        padding: 8px;
+    }
+
+    .message-input input {
+        min-width: 0;
+
+        padding: 10px;
+
+        font-size: 11px;
+    }
+
+    .attachment-button {
+        width: 34px;
+        height: 34px;
+
+        font-size: 14px;
+    }
+
+    .message-input button {
+        min-width: 55px;
+
+        padding: 10px 9px;
+
+        font-size: 10px;
+    }
 }
 
-.chat-image {
-    display: block;
-    max-width: 300px;
-    max-height: 300px;
-    border-radius: 10px;
-    margin-top: 5px;
-    object-fit: cover;
-}
 
-.chat-video {
-    display: block;
-    width: 300px;
-    max-width: 100%;
-    border-radius: 10px;
-    margin-top: 5px;
-}
+/* =========================================================
+   VERY SMALL PHONES
+========================================================= */
 
-.chat-file {
-    display: inline-block;
-    margin-top: 5px;
-    text-decoration: none;
-    font-weight: 500;
+@media (max-width: 430px) {
+
+    .sidebar {
+        width: 31%;
+        min-width: 31%;
+        max-width: 31%;
+
+        padding: 7px;
+    }
+
+    .chat-window {
+        width: 69%;
+    }
+
+    .profile-card {
+        padding: 7px;
+
+        gap: 5px;
+    }
+
+    .profile-avatar {
+        width: 31px;
+        height: 31px;
+
+        font-size: 12px;
+    }
+
+    .profile-info h3 {
+        font-size: 9px;
+    }
+
+    .profile-info p,
+    .profile-online {
+        font-size: 7px;
+    }
+
+    .edit-profile-button {
+        font-size: 7px;
+    }
+
+    .sidebar-title h2 {
+        font-size: 14px;
+    }
+
+    .search-box {
+        margin-bottom: 7px;
+    }
+
+    .search-box input {
+        padding: 7px;
+
+        font-size: 8px;
+    }
+
+    .sidebar > button {
+        padding: 7px;
+
+        font-size: 8px;
+    }
+
+    .chat-user {
+        padding: 6px 3px;
+
+        gap: 5px;
+    }
+
+    .user-avatar {
+        width: 28px;
+        height: 28px;
+
+        font-size: 10px;
+    }
+
+    .user-name-row h3 {
+        font-size: 8px;
+    }
+
+    .user-info > p {
+        font-size: 7px;
+    }
+
+    .online-status,
+    .offline-status {
+        font-size: 6px;
+    }
+
+    .header-avatar {
+        width: 32px;
+        height: 32px;
+
+        font-size: 11px;
+    }
+
+    .header-user-info h2 {
+        font-size: 11px;
+    }
+
+    .messages {
+        padding: 12px 7px;
+    }
+
+    .message-bubble {
+        max-width: 90%;
+
+        padding: 7px 9px;
+    }
+
+    .message-bubble p {
+        font-size: 11px;
+    }
+
+    .chat-image {
+        max-width: 170px;
+    }
+
+    .chat-video {
+        width: 170px;
+    }
+
+    .message-input {
+        padding: 6px;
+    }
+
+    .message-input input {
+        padding: 9px;
+
+        font-size: 10px;
+    }
+
+    .attachment-button {
+        width: 31px;
+        height: 31px;
+    }
+
+    .message-input button {
+        min-width: 48px;
+
+        padding: 9px 7px;
+
+        font-size: 9px;
+    }
 }

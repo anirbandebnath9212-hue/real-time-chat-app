@@ -107,99 +107,24 @@ function ChatDashboard({ setIsLoggedIn }) {
     // FILE SELECTED
     // =========================
 
-const handleFileChange = async (e) => {
+    const handleFileChange = async (e) => {
 
-    const file =
-        e.target.files[0];
+        const file =
+            e.target.files[0];
 
-    if (!file) {
-        return;
-    }
-
-
-    // =========================
-    // CHECK CHAT
-    // =========================
-
-    if (!selectedConversation) {
-
-        alert(
-            "Please select a chat first"
-        );
-
-        return;
-
-    }
-
-
-    try {
-
-        console.log(
-            "Uploading file:",
-            file.name
-        );
+        if (!file) {
+            return;
+        }
 
 
         // =========================
-        // GET TOKEN
+        // CHECK CHAT
         // =========================
 
-        const token =
-            localStorage.getItem("token");
-
-
-        // =========================
-        // CREATE FORM DATA
-        // =========================
-
-        const formData =
-            new FormData();
-
-        formData.append(
-            "file",
-            file
-        );
-
-
-        // =========================
-        // UPLOAD TO CLOUDINARY
-        // =========================
-
-        const uploadResponse =
-            await fetch(
-                "https://real-time-chat-app-hgdr.onrender.com/api/upload",
-                {
-                    method: "POST",
-
-                    headers: {
-
-                        Authorization:
-                            `Bearer ${token}`
-
-                    },
-
-                    body:
-                        formData
-
-                }
-            );
-
-
-        const uploadData =
-            await uploadResponse.json();
-
-
-        console.log(
-            "Upload response:",
-            uploadData
-        );
-
-
-        if (!uploadResponse.ok) {
+        if (!selectedConversation) {
 
             alert(
-                uploadData.message ||
-                "File upload failed"
+                "Please select a chat first"
             );
 
             return;
@@ -207,128 +132,203 @@ const handleFileChange = async (e) => {
         }
 
 
-        // =========================
-        // SEND FILE AS MESSAGE
-        // =========================
+        try {
 
-        const messageResponse =
-            await fetch(
-                "https://real-time-chat-app-hgdr.onrender.com/api/messages",
-                {
-                    method: "POST",
-
-                    headers: {
-
-                        "Content-Type":
-                            "application/json",
-
-                        Authorization:
-                            `Bearer ${token}`
-
-                    },
-
-                    body: JSON.stringify({
-
-                        conversationId:
-                            selectedConversation._id,
-
-                        type:
-                            uploadData.type,
-
-                        fileUrl:
-                            uploadData.fileUrl,
-
-                        fileName:
-                            uploadData.fileName,
-
-                        fileSize:
-                            uploadData.fileSize
-
-                    })
-
-                }
+            console.log(
+                "Uploading file:",
+                file.name
             );
 
 
-        const messageData =
-            await messageResponse.json();
+            // =========================
+            // GET TOKEN
+            // =========================
+
+            const token =
+                localStorage.getItem("token");
 
 
-        console.log(
-            "Message response:",
-            messageData
-        );
+            // =========================
+            // CREATE FORM DATA
+            // =========================
 
+            const formData =
+                new FormData();
 
-        if (!messageResponse.ok) {
-
-            alert(
-                messageData.message ||
-                "Failed to send file message"
+            formData.append(
+                "file",
+                file
             );
 
-            return;
 
-        }
+            // =========================
+            // UPLOAD FILE
+            // =========================
 
+            const uploadResponse =
+                await fetch(
+                    "https://real-time-chat-app-hgdr.onrender.com/api/upload",
+                    {
+                        method: "POST",
 
-        // =========================
-        // ADD MESSAGE TO CHAT
-        // =========================
+                        headers: {
 
-        setMessages(
-            (previousMessages) => {
+                            Authorization:
+                                `Bearer ${token}`
 
-                const alreadyExists =
-                    previousMessages.some(
-                        (previousMessage) =>
-                            previousMessage._id ===
-                            messageData.data._id
-                    );
+                        },
 
+                        body:
+                            formData
 
-                if (alreadyExists) {
-
-                    return previousMessages;
-
-                }
+                    }
+                );
 
 
-                return [
-                    ...previousMessages,
-                    messageData.data
-                ];
+            const uploadData =
+                await uploadResponse.json();
+
+
+            console.log(
+                "Upload response:",
+                uploadData
+            );
+
+
+            if (!uploadResponse.ok) {
+
+                alert(
+                    uploadData.message ||
+                    "File upload failed"
+                );
+
+                return;
 
             }
-        );
 
 
-        console.log(
-            "File message sent successfully!"
-        );
+            // =========================
+            // SEND FILE AS MESSAGE
+            // =========================
+
+            const messageResponse =
+                await fetch(
+                    "https://real-time-chat-app-hgdr.onrender.com/api/messages",
+                    {
+                        method: "POST",
+
+                        headers: {
+
+                            "Content-Type":
+                                "application/json",
+
+                            Authorization:
+                                `Bearer ${token}`
+
+                        },
+
+                        body: JSON.stringify({
+
+                            conversationId:
+                                selectedConversation._id,
+
+                            type:
+                                uploadData.type,
+
+                            fileUrl:
+                                uploadData.fileUrl,
+
+                            fileName:
+                                uploadData.fileName,
+
+                            fileSize:
+                                uploadData.fileSize
+
+                        })
+
+                    }
+                );
 
 
-    } catch (error) {
-
-        console.log(
-            "File message error:",
-            error
-        );
+            const messageData =
+                await messageResponse.json();
 
 
-        alert(
-            "Cannot connect to local backend"
-        );
+            console.log(
+                "Message response:",
+                messageData
+            );
 
-    }
+
+            if (!messageResponse.ok) {
+
+                alert(
+                    messageData.message ||
+                    "Failed to send file message"
+                );
+
+                return;
+
+            }
 
 
-    // Reset input so the same file
-    // can be selected again.
+            // =========================
+            // ADD MESSAGE TO CHAT
+            // =========================
 
-    e.target.value = "";
+            setMessages(
+                (previousMessages) => {
 
-};
+                    const alreadyExists =
+                        previousMessages.some(
+                            (previousMessage) =>
+                                previousMessage._id ===
+                                messageData.data._id
+                        );
+
+
+                    if (alreadyExists) {
+
+                        return previousMessages;
+
+                    }
+
+
+                    return [
+                        ...previousMessages,
+                        messageData.data
+                    ];
+
+                }
+            );
+
+
+            console.log(
+                "File message sent successfully!"
+            );
+
+
+        } catch (error) {
+
+            console.log(
+                "File message error:",
+                error
+            );
+
+
+            alert(
+                "Cannot connect to server"
+            );
+
+        }
+
+
+        // Reset input so the same file
+        // can be selected again.
+
+        e.target.value = "";
+
+    };
 
 
     // =========================
@@ -344,6 +344,7 @@ const handleFileChange = async (e) => {
             return;
         }
 
+
         if (
             shouldScrollToBottomRef.current
         ) {
@@ -356,15 +357,19 @@ const handleFileChange = async (e) => {
                 false;
 
             return;
+
         }
+
 
         const distanceFromBottom =
             container.scrollHeight -
             container.scrollTop -
             container.clientHeight;
 
+
         const isNearBottom =
             distanceFromBottom < 150;
+
 
         if (isNearBottom) {
 
@@ -389,6 +394,7 @@ const handleFileChange = async (e) => {
                 "Socket connected:",
                 socket.id
             );
+
 
             if (selectedConversation) {
 
@@ -471,6 +477,7 @@ const handleFileChange = async (e) => {
                                 };
 
                             }
+
 
                             return conversation;
 
@@ -702,6 +709,7 @@ const handleFileChange = async (e) => {
 
                                 }
 
+
                                 return message;
 
                             }
@@ -733,6 +741,7 @@ const handleFileChange = async (e) => {
                                 };
 
                             }
+
 
                             return conversation;
 
@@ -858,9 +867,11 @@ const handleFileChange = async (e) => {
                         "token"
                     );
 
+
                     setIsLoggedIn(
                         false
                     );
+
 
                     return;
 
@@ -1185,6 +1196,7 @@ const handleFileChange = async (e) => {
                                 };
 
                             }
+
 
                             return item;
 
@@ -2197,43 +2209,6 @@ const handleFileChange = async (e) => {
                                             <div className="message-bubble">
 
 
-                                                {/* MESSAGE TOP */}
-
-                                                <div className="message-top">
-
-                                                    <strong>
-
-                                                        {isMyMessage
-                                                            ? "You"
-                                                            : message
-                                                                .sender
-                                                                ?.username ||
-                                                              "User"}
-
-                                                    </strong>
-
-
-                                                    <button
-                                                        className="message-menu-button"
-                                                        onClick={(e) => {
-
-                                                            e.stopPropagation();
-
-                                                            setOpenMessageMenu(
-                                                                openMessageMenu ===
-                                                                message._id
-                                                                    ? null
-                                                                    : message._id
-                                                            );
-
-                                                        }}
-                                                    >
-                                                        ⋮
-                                                    </button>
-
-                                                </div>
-
-
                                                 {/* REPLIED MESSAGE */}
 
                                                 {message.replyTo && (
@@ -2272,79 +2247,116 @@ const handleFileChange = async (e) => {
                                                 )}
 
 
-                                               {/* ACTUAL MESSAGE */}
+                                                {/* ACTUAL MESSAGE */}
 
-{message.type === "image" && message.fileUrl && (
+                                                {message.type === "image" &&
+                                                    message.fileUrl && (
 
-    <img
-        src={message.fileUrl}
-        alt={message.fileName || "Image"}
-        className="chat-image"
-    />
-
-)}
-
-
-{message.type === "video" && message.fileUrl && (
-
-    <video
-        src={message.fileUrl}
-        controls
-        className="chat-video"
-    />
-
-)}
-
-
-{message.type === "file" && message.fileUrl && (
-
-    <a
-        href={message.fileUrl}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="chat-file"
-    >
-        📎 {message.fileName || "Open file"}
-    </a>
-
-)}
-
-
-{message.type === "text" && (
-
-    <p>
-        {message.text}
-    </p>
-
-)}
-
-
-                                                {/* TIME */}
-
-                                                <small>
-
-                                                    {
-                                                        formatMessageTime(
-                                                            message.createdAt
-                                                        )
-                                                    }
-
-
-                                                    {isMyMessage && (
-
-                                                        <span
-                                                            className={
-                                                                message.read
-                                                                    ? "message-ticks read"
-                                                                    : "message-ticks"
+                                                        <img
+                                                            src={message.fileUrl}
+                                                            alt={
+                                                                message.fileName ||
+                                                                "Image"
                                                             }
-                                                        >
-                                                            ✓✓
-                                                        </span>
+                                                            className="chat-image"
+                                                        />
 
                                                     )}
 
-                                                </small>
+
+                                                {message.type === "video" &&
+                                                    message.fileUrl && (
+
+                                                        <video
+                                                            src={message.fileUrl}
+                                                            controls
+                                                            className="chat-video"
+                                                        />
+
+                                                    )}
+
+
+                                                {message.type === "file" &&
+                                                    message.fileUrl && (
+
+                                                        <a
+                                                            href={message.fileUrl}
+                                                            target="_blank"
+                                                            rel="noopener noreferrer"
+                                                            className="chat-file"
+                                                        >
+                                                            📎{" "}
+                                                            {
+                                                                message.fileName ||
+                                                                "Open file"
+                                                            }
+                                                        </a>
+
+                                                    )}
+
+
+                                                {message.type === "text" && (
+
+                                                    <p>
+                                                        {
+                                                            message.text
+                                                        }
+                                                    </p>
+
+                                                )}
+
+
+                                                {/* MESSAGE BOTTOM */}
+
+                                                <div className="message-bottom">
+
+                                                    <small>
+
+                                                        {
+                                                            formatMessageTime(
+                                                                message.createdAt
+                                                            )
+                                                        }
+
+
+                                                        {isMyMessage && (
+
+                                                            <span
+                                                                className={
+                                                                    message.read
+                                                                        ? "message-ticks read"
+                                                                        : "message-ticks"
+                                                                }
+                                                            >
+                                                                ✓✓
+                                                            </span>
+
+                                                        )}
+
+                                                    </small>
+
+
+                                                    {/* MESSAGE MENU */}
+
+                                                    <button
+                                                        className="message-menu-button"
+                                                        onClick={(e) => {
+
+                                                            e.stopPropagation();
+
+                                                            setOpenMessageMenu(
+                                                                openMessageMenu ===
+                                                                message._id
+                                                                    ? null
+                                                                    : message._id
+                                                            );
+
+                                                        }}
+                                                    >
+                                                        ⋮
+                                                    </button>
+
+                                                </div>
 
 
                                                 {/* MESSAGE MENU */}
@@ -2369,7 +2381,7 @@ const handleFileChange = async (e) => {
                                                             onClick={() => {
 
                                                                 navigator.clipboard.writeText(
-                                                                    message.text
+                                                                    message.text || ""
                                                                 );
 
 
@@ -2527,75 +2539,79 @@ const handleFileChange = async (e) => {
                     MESSAGE INPUT
                 ========================= */}
 
-                <div className="message-input">
+                {selectedConversation && (
 
-                    {/* HIDDEN FILE INPUT */}
+                    <div className="message-input">
 
-                    <input
-                        ref={
-                            fileInputRef
-                        }
-                        type="file"
-                        style={{
-                            display: "none"
-                        }}
-                        onChange={
-                            handleFileChange
-                        }
-                    />
+                        {/* HIDDEN FILE INPUT */}
 
-
-                    {/* ATTACHMENT BUTTON */}
-
-                    <button
-                        type="button"
-                        className="attachment-button"
-                        onClick={
-                            handleAttachmentClick
-                        }
-                        title="Attach a file"
-                    >
-                        📎
-                    </button>
-
-
-                    <input
-                        type="text"
-                        placeholder={
-                            replyingTo
-                                ? "Reply to message..."
-                                : "Type a message..."
-                        }
-                        value={
-                            messageText
-                        }
-                        onChange={
-                            handleTyping
-                        }
-                        onKeyDown={(e) => {
-
-                            if (
-                                e.key ===
-                                "Enter"
-                            ) {
-
-                                handleSendMessage();
-
+                        <input
+                            ref={
+                                fileInputRef
                             }
+                            type="file"
+                            style={{
+                                display: "none"
+                            }}
+                            onChange={
+                                handleFileChange
+                            }
+                        />
 
-                        }}
-                    />
+
+                        {/* ATTACHMENT BUTTON */}
+
+                        <button
+                            type="button"
+                            className="attachment-button"
+                            onClick={
+                                handleAttachmentClick
+                            }
+                            title="Attach a file"
+                        >
+                            📎
+                        </button>
 
 
-                    <button
-                        onClick={
-                            handleSendMessage
-                        }
-                    >
-                        Send
-                    </button>
+                        <input
+                            type="text"
+                            placeholder={
+                                replyingTo
+                                    ? "Reply to message..."
+                                    : "Type a message..."
+                            }
+                            value={
+                                messageText
+                            }
+                            onChange={
+                                handleTyping
+                            }
+                            onKeyDown={(e) => {
 
-                </div>
+                                if (
+                                    e.key ===
+                                    "Enter"
+                                ) {
+
+                                    handleSendMessage();
+
+                                }
+
+                            }}
+                        />
+
+
+                        <button
+                            onClick={
+                                handleSendMessage
+                            }
+                        >
+                            Send
+                        </button>
+
+                    </div>
+
+                )}
 
 
             </div>
